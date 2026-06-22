@@ -29,7 +29,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: process.env.CLIENT_URL || ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));

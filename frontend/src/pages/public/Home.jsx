@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Shield, Headphones, Tag } from 'lucide-react';
 import ProductCard from '../../components/common/ProductCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
+import Marquee from '../../components/ui/Marquee';
 import api from '../../utils/axios';
+
+const reviews = [
+  { name: "John Doe", handle: "@johndoe", body: "I've never seen anything like this before. It's amazing. I love it." },
+  { name: "Jane Smith", handle: "@janesmith", body: "I don't know what to say. I'm speechless. This is fantastic." },
+  { name: "Mike Johnson", handle: "@mikej", body: "I'm at a loss for words. This is amazing. I love it." },
+  { name: "Emily Davis", handle: "@emilyd", body: "Incredible shopping experience. The deals are unbeatable!" },
+  { name: "Chris Wilson", handle: "@chrisw", body: "Fast shipping and great customer support. Highly recommended." },
+];
 
 const features = [
   { icon: Truck, title: 'Free Shipping', desc: 'On orders over $50' },
@@ -99,6 +108,33 @@ const Home = () => {
           <Link to="/categories" className="btn-primary">
             View All Products <ArrowRight size={16} />
           </Link>
+        </div>
+      </section>
+
+      <section className="py-16 overflow-hidden bg-slate-50 dark:bg-slate-900/50">
+        <div className="page-container mb-10 text-center">
+          <h2 className="section-title">What Our Customers Say</h2>
+          <p className="section-subtitle">Real feedback from verified buyers</p>
+        </div>
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+          <Marquee pauseOnHover className="[--duration:40s]">
+            {reviews.map((review, i) => (
+              <div key={i} className="flex flex-col border border-slate-200 dark:border-slate-800 rounded-xl p-6 bg-white dark:bg-slate-950 w-[350px] shadow-sm mx-2">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
+                    {review.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white">{review.name}</h4>
+                    <p className="text-xs text-slate-500">{review.handle}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">"{review.body}"</p>
+              </div>
+            ))}
+          </Marquee>
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-slate-50 dark:from-slate-950"></div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-slate-50 dark:from-slate-950"></div>
         </div>
       </section>
 

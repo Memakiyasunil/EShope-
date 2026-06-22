@@ -11,6 +11,7 @@ import Blog from '../models/Blog.js';
 import Notification from '../models/Notification.js';
 import Settings from '../models/Settings.js';
 import { ORDER_STATUSES } from '../models/Order.js';
+import bcrypt from 'bcrypt';
 
 const CITIES = [
   { city: 'Mumbai', state: 'Maharashtra', postalCode: '400001' },
@@ -87,13 +88,17 @@ const seedUsers = async () => {
     isEmailVerified: true,
   });
 
+  const salt = await bcrypt.genSalt(10);
+  const buyerPassword = await bcrypt.hash('customer123', salt);
+  const sellerPassword = await bcrypt.hash('seller123', salt);
+
   const buyers = [];
   for (let i = 1; i <= 100; i++) {
     const loc = pick(CITIES);
     buyers.push({
       name: `Customer ${i}`,
       email: `customer${i}@eshoponline.com`,
-      password: 'customer123',
+      password: buyerPassword,
       role: 'buyer',
       isEmailVerified: true,
       phone: `98${String(i).padStart(8, '0')}`,
@@ -116,7 +121,7 @@ const seedUsers = async () => {
     sellerUsers.push({
       name: `Seller ${i}`,
       email: `seller${i}@eshoponline.com`,
-      password: 'seller123',
+      password: sellerPassword,
       role: 'seller',
       isEmailVerified: true,
       phone: `97${String(i).padStart(8, '0')}`,

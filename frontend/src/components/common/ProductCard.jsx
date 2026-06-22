@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
@@ -42,10 +43,14 @@ const ProductCard = ({ product }) => {
     toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
   };
 
+  const MotionLink = motion.create(Link);
+
   return (
-    <Link
+    <MotionLink
       to={`/products/${_id}`}
-      className="glass-card p-0 overflow-hidden group block animate-fade-in"
+      whileHover={{ y: -6, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="glass-card p-0 overflow-hidden group block animate-fade-in hover:shadow-2xl dark:hover:shadow-slate-800/80"
     >
       <div className="relative overflow-hidden aspect-square">
         <img
@@ -113,7 +118,7 @@ const ProductCard = ({ product }) => {
           </button>
         </div>
       </div>
-    </Link>
+    </MotionLink>
   );
 };
 

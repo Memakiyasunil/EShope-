@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShoppingCart,
   Heart,
@@ -29,6 +30,9 @@ const Navbar = () => {
   const { isAuthenticated, user, signOut } = useAuth();
   const cartCount = useSelector(selectCartCount);
   const wishlistCount = useSelector((state) => state.wishlist.items.length);
+  const location = useLocation();
+
+  const MotionLink = motion.create(Link);
 
   const linkClass = ({ isActive }) =>
     `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -39,16 +43,25 @@ const Navbar = () => {
 
   return (
     <header className="glass-nav">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-0">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-9 bg-brand-600 rounded-lg flex items-center justify-center">
-              <Store size={20} className="text-white" />
-            </div>
+          <MotionLink 
+            to="/" 
+            className="flex items-center gap-2 shrink-0"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <motion.div 
+              className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden"
+              whileHover={{ rotate: 5 }}
+              transition={{ duration: 0.3 }}
+            >
+              <img src="/logo.png" alt="E-Shop Logo" className="w-full h-full object-contain drop-shadow-sm" />
+            </motion.div>
             <span className="text-lg font-bold text-slate-900 dark:text-white hidden sm:block">
               E-Shop Online
             </span>
-          </Link>
+          </MotionLink>
 
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (

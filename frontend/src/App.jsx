@@ -1,8 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from './layouts/MainLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import AuthLayout from './layouts/AuthLayout';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import Ripple from './components/ui/Ripple';
+import MorphingText from './components/ui/MorphingText';
 
 import Home from './pages/public/Home';
 import About from './pages/public/About';
@@ -52,71 +56,116 @@ import AdminReports from './pages/admin/AdminReports';
 import AdminSettings from './pages/admin/AdminSettings';
 
 const App = () => {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 4500); // Extended to 4.5 seconds to show off morphing text
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="categories" element={<Categories />} />
-        <Route path="products/:id" element={<ProductDetails />} />
-        <Route path="shops/:id" element={<ShopDetails />} />
-        <Route path="faq" element={<FAQ />} />
-        <Route path="privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="terms" element={<Terms />} />
-        <Route path="seller-register" element={<SellerRegister />} />
-        <Route path="cart" element={<Cart />} />
-      </Route>
+    <>
+      <AnimatePresence>
+        {showSplash && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-[10000] bg-white dark:bg-slate-900 flex flex-col items-center justify-center text-slate-900 dark:text-white overflow-hidden"
+          >
+            <Ripple />
+            <div className="relative z-10 flex flex-col items-center justify-center h-full w-full">
+              <motion.img 
+                src="/logo.png" 
+                alt="E-Shop Logo" 
+                className="w-32 h-32 md:w-48 md:h-48 object-contain mb-8 drop-shadow-2xl"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8, type: 'spring', stiffness: 100 }}
+              />
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="w-full h-24 relative"
+              >
+                <MorphingText 
+                  texts={["E-Shope", "Shop Smarter", "Live Better", "E-Shope"]} 
+                  className="text-4xl md:text-5xl font-extrabold tracking-tight"
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <Route element={<AuthLayout />}>
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="verify-email" element={<VerifyEmail />} />
-        <Route path="reset-password" element={<ResetPassword />} />
-      </Route>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="products/:id" element={<ProductDetails />} />
+          <Route path="shops/:id" element={<ShopDetails />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<Terms />} />
+          <Route path="seller-register" element={<SellerRegister />} />
+          <Route path="cart" element={<Cart />} />
+        </Route>
 
-      <Route
-        path="dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<BuyerDashboard />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="orders/:id" element={<OrderDetails />} />
-        <Route path="wishlist" element={<Wishlist />} />
-        <Route path="cart" element={<Cart />} />
-        <Route path="checkout" element={<Checkout />} />
-        <Route path="addresses" element={<Addresses />} />
-        <Route path="settings" element={<Settings />} />
+        <Route element={<AuthLayout />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="verify-email" element={<VerifyEmail />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+        </Route>
 
-        <Route path="seller" element={<SellerDashboard />} />
-        <Route path="seller/products" element={<SellerProducts />} />
-        <Route path="seller/products/add" element={<AddProduct />} />
-        <Route path="seller/orders" element={<SellerOrders />} />
-        <Route path="seller/reports" element={<SellerReports />} />
-        <Route path="seller/settings" element={<SellerSettings />} />
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<BuyerDashboard />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="orders/:id" element={<OrderDetails />} />
+          <Route path="wishlist" element={<Wishlist />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="addresses" element={<Addresses />} />
+          <Route path="settings" element={<Settings />} />
 
-        <Route path="admin" element={<AdminDashboard />} />
-        <Route path="admin/users" element={<AdminUsers />} />
-        <Route path="admin/sellers" element={<AdminSellers />} />
-        <Route path="admin/products" element={<AdminProducts />} />
-        <Route path="admin/categories" element={<AdminCategories />} />
-        <Route path="admin/orders" element={<AdminOrders />} />
-        <Route path="admin/payments" element={<AdminPayments />} />
-        <Route path="admin/coupons" element={<AdminCoupons />} />
-        <Route path="admin/banners" element={<AdminBanners />} />
-        <Route path="admin/blogs" element={<AdminBlogs />} />
-        <Route path="admin/reports" element={<AdminReports />} />
-        <Route path="admin/settings" element={<AdminSettings />} />
-      </Route>
+          <Route path="seller" element={<SellerDashboard />} />
+          <Route path="seller/products" element={<SellerProducts />} />
+          <Route path="seller/products/add" element={<AddProduct />} />
+          <Route path="seller/orders" element={<SellerOrders />} />
+          <Route path="seller/reports" element={<SellerReports />} />
+          <Route path="seller/settings" element={<SellerSettings />} />
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="admin/users" element={<AdminUsers />} />
+          <Route path="admin/sellers" element={<AdminSellers />} />
+          <Route path="admin/products" element={<AdminProducts />} />
+          <Route path="admin/categories" element={<AdminCategories />} />
+          <Route path="admin/orders" element={<AdminOrders />} />
+          <Route path="admin/payments" element={<AdminPayments />} />
+          <Route path="admin/coupons" element={<AdminCoupons />} />
+          <Route path="admin/banners" element={<AdminBanners />} />
+          <Route path="admin/blogs" element={<AdminBlogs />} />
+          <Route path="admin/reports" element={<AdminReports />} />
+          <Route path="admin/settings" element={<AdminSettings />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 };
 

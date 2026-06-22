@@ -79,7 +79,10 @@ const Sidebar = () => {
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-slate-200/50 dark:border-slate-700/50">
-          <span className="font-semibold text-slate-900 dark:text-white">E-Shop Online</span>
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="E-Shop Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+            <span className="font-semibold text-slate-900 dark:text-white">E-Shop Online</span>
+          </div>
           <button onClick={() => dispatch(setSidebarOpen(false))} className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
             <X size={18} />
           </button>
