@@ -29,22 +29,44 @@ const demoProducts = [
 ];
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categorySections, setCategorySections] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchHomeData = async () => {
       try {
-        const { data } = await api.get('/products?limit=8');
-        const productsArray = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : (Array.isArray(data.data) ? data.data : []));
-        setProducts(productsArray.length > 0 ? productsArray : demoProducts);
+        const { data: catData } = await api.get('/categories');
+        const categoriesArray = catData?.categories || [];
+        setCategories(categoriesArray);
+        
+        // Take the top 4 categories to display on home page
+        const topCategories = categoriesArray.slice(0, 4);
+
+        if (topCategories.length > 0) {
+          const sectionsData = await Promise.all(
+            topCategories.map(async (cat) => {
+              try {
+                // Fetch 4 products for each category
+                const { data: prodData } = await api.get(`/products?category=${cat._id}&limit=4`);
+                const products = Array.isArray(prodData) ? prodData : (Array.isArray(prodData.products) ? prodData.products : (Array.isArray(prodData.data) ? prodData.data : []));
+                return { category: cat, products };
+              } catch (err) {
+                return { category: cat, products: [] };
+              }
+            })
+          );
+          setCategorySections(sectionsData.filter(section => section.products.length > 0));
+        } else {
+          setCategorySections([]);
+        }
       } catch {
-        setProducts(demoProducts);
+        setCategorySections([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchHomeData();
   }, []);
 
   return (
@@ -71,7 +93,35 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="page-container -mt-8 relative z-10">
+      {/* Category Icon Bar */}
+      {categories.length > 0 && (
+        <section className="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-sm relative z-20">
+          <div className="page-container py-4">
+            <div className="flex gap-6 overflow-x-auto no-scrollbar pb-2 items-center justify-start md:justify-center">
+              {categories.map((cat) => (
+                <Link 
+                  key={cat._id} 
+                  to={`/categories?category=${cat._id}`}
+                  className="flex flex-col items-center gap-2 group min-w-[80px]"
+                >
+                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-transparent group-hover:border-brand-500 transition-all duration-300 p-1">
+                    <img 
+                      src={cat.image || 'https://via.placeholder.com/150'} 
+                      alt={cat.name}
+                      className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300 group-hover:text-brand-600 dark:group-hover:text-brand-400 text-center whitespace-nowrap">
+                    {cat.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="page-container -mt-8 relative z-10 pt-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {features.map((feature) => (
             <div key={feature.title} className="glass-card text-center py-6">
@@ -83,33 +133,54 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="page-container py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="section-title">Featured Products</h2>
-            <p className="section-subtitle">Handpicked items just for you</p>
-          </div>
-          <Link to="/categories" className="btn-outline hidden sm:inline-flex">
-            View All <ArrowRight size={16} />
-          </Link>
-        </div>
-
-        {loading ? (
+      {loading ? (
+        <section className="page-container py-12">
           <LoadingSkeleton count={4} />
-        ) : (
+        </section>
+      ) : categorySections.length > 0 ? (
+        categorySections.map((section) => (
+          <section key={section.category._id} className="page-container py-12 border-b border-slate-100 dark:border-slate-800 last:border-0">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="section-title">Explore {section.category.name}</h2>
+                <p className="section-subtitle">Top picks from {section.category.name.toLowerCase()}</p>
+              </div>
+              <Link to={`/categories?category=${section.category._id}`} className="btn-outline hidden sm:inline-flex">
+                View All <ArrowRight size={16} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {section.products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+
+            <div className="text-center mt-8 sm:hidden">
+              <Link to={`/categories?category=${section.category._id}`} className="btn-primary">
+                View All {section.category.name} <ArrowRight size={16} />
+              </Link>
+            </div>
+          </section>
+        ))
+      ) : (
+        <section className="page-container py-12">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="section-title">Featured Products</h2>
+              <p className="section-subtitle">Handpicked items just for you</p>
+            </div>
+            <Link to="/categories" className="btn-outline hidden sm:inline-flex">
+              View All <ArrowRight size={16} />
+            </Link>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {demoProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
-        )}
-
-        <div className="text-center mt-8 sm:hidden">
-          <Link to="/categories" className="btn-primary">
-            View All Products <ArrowRight size={16} />
-          </Link>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="py-16 overflow-hidden bg-slate-50 dark:bg-slate-900/50">
         <div className="page-container mb-10 text-center">
