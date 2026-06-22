@@ -3,6 +3,7 @@ import ApiError, { sendSuccess } from '../utils/apiResponse.js';
 import Product from '../models/Product.js';
 import Seller from '../models/Seller.js';
 import Review from '../models/Review.js';
+import Category from '../models/Category.js';
 import { uploadMultipleToCloud } from '../middleware/upload.js';
 
 const buildProductFilter = (query) => {
@@ -49,6 +50,20 @@ export const getProducts = asyncHandler(async (req, res) => {
   const sort = req.query.sort || '-createdAt';
 
   const filter = buildProductFilter(req.query);
+
+  // Handle category slug
+  if (req.query.category && !req.query.category.match(/^[0-9a-fA-F]{24}$/)) {
+    const categoryDoc = await Category.findOne({ slug: req.query.category });
+    if (categoryDoc) {
+      filter.category = categoryDoc._id;
+    } else {
+      return res.status(200).json({
+        success: true,
+        data: [],
+        pagination: { page, limit, total: 0, pages: 0 },
+      });
+    }
+  }
 
   const [products, total] = await Promise.all([
     Product.find(filter)

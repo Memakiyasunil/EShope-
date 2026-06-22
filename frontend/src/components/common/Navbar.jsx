@@ -87,7 +87,7 @@ const Navbar = () => {
             <ThemeToggle />
 
             <Link
-              to="/wishlist"
+              to="/dashboard/wishlist"
               className="relative p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             >
               <Heart size={20} />

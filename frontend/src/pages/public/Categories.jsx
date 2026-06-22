@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, Laptop, Shirt, Home as HomeIcon, Dumbbell, Book, ShoppingBag, Coffee, ArrowLeft } from 'lucide-react';
 import ProductCard from '../../components/common/ProductCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import Pagination from '../../components/common/Pagination';
-import Breadcrumb from '../../components/common/Breadcrumb';
-import SearchBar from '../../components/common/SearchBar';
 import api from '../../utils/axios';
 
 const demoProducts = Array.from({ length: 12 }, (_, i) => ({
@@ -16,8 +14,18 @@ const demoProducts = Array.from({ length: 12 }, (_, i) => ({
   reviewCount: 10 + i * 5,
   discount: i % 3 === 0 ? 15 : 0,
   stock: i % 5 === 0 ? 0 : 50,
-  image: `https://images.unsplash.com/photo-${1505740420928 + i}?w=400`,
+  image: `https://placehold.co/600x600/f8fafc/334155?text=Product+${i + 1}`,
 }));
+
+const CATEGORY_ITEMS = [
+  { id: 'electronics', label: 'Electronics', icon: Laptop, color: 'bg-blue-500' },
+  { id: 'fashion', label: "Fashion", icon: Shirt, color: 'bg-pink-500' },
+  { id: 'home-appliances', label: 'Home Appliances', icon: HomeIcon, color: 'bg-green-500' },
+  { id: 'sports', label: 'Sports', icon: Dumbbell, color: 'bg-orange-500' },
+  { id: 'books', label: 'Books', icon: Book, color: 'bg-purple-500' },
+  { id: 'grocery', label: 'Grocery', icon: ShoppingBag, color: 'bg-yellow-500' },
+  { id: 'mobile', label: 'Mobile', icon: Coffee, color: 'bg-red-500' },
+];
 
 const Categories = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -48,7 +56,11 @@ const Categories = () => {
         setLoading(false);
       }
     };
-    fetchProducts();
+    if (category) {
+      fetchProducts();
+    } else {
+      setLoading(false);
+    }
   }, [page, search, sort, category]);
 
   const updateParam = (key, value) => {
@@ -59,19 +71,55 @@ const Categories = () => {
     setSearchParams(params);
   };
 
+  const handleBackToCategories = () => {
+    const params = new URLSearchParams(searchParams);
+    params.delete('category');
+    params.delete('page');
+    setSearchParams(params);
+  };
+
+  if (!category) {
+    return (
+      <div className="page-container">
+        <div className="mb-8 text-center">
+          <h1 className="section-title">Shop by Category</h1>
+          <p className="section-subtitle">Select a category to view products</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {CATEGORY_ITEMS.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => updateParam('category', cat.id)}
+              className="glass-card flex flex-col items-center justify-center p-8 gap-4 hover:scale-105 transition-transform duration-300"
+            >
+              <div className={`p-4 rounded-full text-white ${cat.color}`}>
+                <cat.icon size={32} />
+              </div>
+              <span className="font-medium text-lg dark:text-white">{cat.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const currentCategoryLabel = CATEGORY_ITEMS.find(c => c.id === category)?.label || 'Products';
+
   return (
     <div className="page-container">
-      <Breadcrumb items={[{ label: 'Shop', path: '/categories' }]} />
-
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="section-title">Shop All Products</h1>
-          <p className="section-subtitle">Browse our complete collection</p>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={handleBackToCategories}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+          >
+            <ArrowLeft className="text-slate-600 dark:text-slate-300" />
+          </button>
+          <div>
+            <h1 className="section-title">{currentCategoryLabel}</h1>
+            <p className="section-subtitle">Browse products in this category</p>
+          </div>
         </div>
-        <SearchBar
-          className="max-w-sm"
-          onSearch={(q) => updateParam('search', q)}
-        />
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -91,22 +139,6 @@ const Categories = () => {
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
                 <option value="rating">Top Rated</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="label-text">Category</label>
-              <select
-                value={category}
-                onChange={(e) => updateParam('category', e.target.value)}
-                className="input-field"
-              >
-                <option value="">All Categories</option>
-                <option value="electronics">Electronics</option>
-                <option value="fashion">Fashion</option>
-                <option value="home">Home & Garden</option>
-                <option value="sports">Sports</option>
-                <option value="books">Books</option>
               </select>
             </div>
           </div>

@@ -22,8 +22,14 @@ const ProductCard = ({ product }) => {
     stock,
   } = product;
 
-  const productImage = image || images?.[0] || 'https://via.placeholder.com/300x300?text=No+Image';
+  const productImage = image || images?.[0] || 'https://placehold.co/600x600/e2e8f0/1e293b?text=No+Image';
   const discountedPrice = discount ? price - (price * discount) / 100 : price;
+
+  // Use placehold.co as a reliable fallback if picsum is down
+  let finalImage = productImage;
+  if (finalImage.includes('picsum.photos')) {
+    finalImage = `https://placehold.co/600x600/f8fafc/334155?text=${encodeURIComponent(name.split(' ').slice(0, 2).join(' '))}`;
+  }
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -52,12 +58,16 @@ const ProductCard = ({ product }) => {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="glass-card p-0 overflow-hidden group block animate-fade-in hover:shadow-2xl dark:hover:shadow-slate-800/80"
     >
-      <div className="relative overflow-hidden aspect-square">
+      <div className="relative overflow-hidden aspect-square bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         <img
-          src={productImage}
+          src={finalImage}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = `https://placehold.co/600x600/f8fafc/334155?text=${encodeURIComponent(name.split(' ').slice(0, 2).join(' '))}`;
+          }}
         />
         {discount > 0 && (
           <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
