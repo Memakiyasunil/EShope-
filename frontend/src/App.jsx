@@ -7,8 +7,7 @@ import SellerLayout from './layouts/SellerLayout';
 import AdminLayout from './layouts/AdminLayout';
 import AuthLayout from './layouts/AuthLayout';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import Ripple from './components/ui/Ripple';
-import MorphingText from './components/ui/MorphingText';
+import SplashScreen from './components/ui/SplashScreen';
 
 import Home from './pages/public/Home';
 import About from './pages/public/About';
@@ -98,44 +97,14 @@ const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 4500);
+    }, 3500);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
       <AnimatePresence>
-        {showSplash && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-[10000] bg-white dark:bg-slate-900 flex flex-col items-center justify-center text-slate-900 dark:text-white overflow-hidden"
-          >
-            <Ripple />
-            <div className="relative z-10 flex flex-col items-center justify-center h-full w-full">
-              <motion.img 
-                src="/logo.png" 
-                alt="E-Shop Logo" 
-                className="w-32 h-32 md:w-48 md:h-48 object-contain mb-8 drop-shadow-2xl"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8, type: 'spring', stiffness: 100 }}
-              />
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="w-full h-24 relative"
-              >
-                <MorphingText 
-                  texts={["E-Shope", "Shop Smarter", "Live Better", "E-Shope"]} 
-                  className="text-4xl md:text-5xl font-extrabold tracking-tight"
-                />
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
+        {showSplash && <SplashScreen />}
       </AnimatePresence>
 
       <Routes>

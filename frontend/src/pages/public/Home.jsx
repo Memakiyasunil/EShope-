@@ -95,7 +95,7 @@ const Home = () => {
 
           <RevealText 
             text="The Future of Digital Commerce." 
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 justify-center"
+            className="text-[clamp(2.5rem,6vw,6rem)] leading-tight font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 justify-center"
           />
           
           <motion.p 

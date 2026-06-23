@@ -28,7 +28,7 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredMenu, setHoveredMenu] = useState(null);
-  
+
   const { isAuthenticated, user, signOut } = useAuth();
   const cartCount = useSelector(selectCartCount);
   const wishlistCount = useSelector((state) => state.wishlist.items.length);
@@ -43,31 +43,32 @@ const Navbar = () => {
   const MotionLink = motion.create(Link);
 
   return (
-    <header 
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'glass-nav py-2' : 'bg-transparent py-4'
-      }`}
+    <header
+      className={`fixed top-0 w-full z-50 transition-all duration-500 border-b ${scrolled
+        ? 'bg-white/75 dark:bg-slate-900/75 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.04)] border-slate-200/50 dark:border-slate-800/50 py-3'
+        : 'bg-transparent border-transparent py-5'
+        }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
-          
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 md:h-20">
+
           {/* Logo */}
-          <MotionLink 
-            to="/" 
-            className="flex items-center gap-3 shrink-0 group"
+          <MotionLink
+            to="/"
+            className="flex items-center gap-3 shrink-0 group transition-all duration-300"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden bg-white shadow-sm group-hover:shadow-md transition-all">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain p-1" />
+            <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center overflow-visible transition-transform duration-500 group-hover:drop-shadow-[0_0_12px_rgba(0,112,243,0.3)] dark:group-hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.3)]">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-300 hidden sm:block tracking-tight">
-              E-Shop
+            <span className="text-2xl md:text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400 hidden sm:block tracking-tighter transition-all duration-300 group-hover:opacity-90 py-1">
+              E-Shope
             </span>
           </MotionLink>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-full backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
+          <nav className="hidden lg:flex items-center gap-2 bg-slate-100/40 dark:bg-slate-800/40 p-1.5 rounded-full backdrop-blur-md border border-white/20 dark:border-slate-700/50 shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] transition-all duration-500 hover:bg-slate-100/60 dark:hover:bg-slate-800/60">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.to;
               return (
@@ -79,18 +80,19 @@ const Navbar = () => {
                 >
                   <Link
                     to={link.to}
-                    className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
-                      isActive 
-                        ? 'text-slate-900 dark:text-white' 
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                    }`}
+                    className={`relative px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-1.5 group/link ${isActive
+                      ? 'text-slate-900 dark:text-white'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
                   >
-                    {isActive && (
+                    {isActive ? (
                       <motion.div
                         layoutId="nav-pill"
-                        className="absolute inset-0 bg-white dark:bg-slate-700 rounded-full shadow-sm"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                        className="absolute inset-0 bg-white dark:bg-slate-700/80 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)] border border-slate-200/50 dark:border-slate-600/50"
+                        transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
                       />
+                    ) : (
+                      <div className="absolute inset-0 bg-slate-200/0 dark:bg-slate-700/0 rounded-full transition-all duration-300 group-hover/link:bg-slate-200/50 dark:group-hover/link:bg-slate-700/50" />
                     )}
                     <span className="relative z-10">{link.label}</span>
                     {link.hasMegaMenu && <ChevronDown size={14} className="relative z-10 opacity-50" />}
@@ -140,94 +142,98 @@ const Navbar = () => {
           </nav>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-sm mx-6">
-            <SearchBar className="w-full bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-sm border-transparent focus-within:bg-white dark:focus-within:bg-slate-900 transition-all rounded-full" />
+          <div className="hidden md:flex flex-1 max-w-md mx-8 transition-all duration-300">
+            <SearchBar className="w-full shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_2px_rgba(0,0,0,0.2)] rounded-full transition-all duration-500 focus-within:ring-2 focus-within:ring-brand-500/50 focus-within:shadow-[0_0_15px_rgba(0,112,243,0.15)] dark:focus-within:shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 lg:gap-4">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="md:hidden p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="md:hidden p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300 active:scale-95"
             >
-              <Search size={20} />
+              <Search size={22} />
             </button>
 
-            <ThemeToggle />
+            <div className="flex items-center gap-1 sm:gap-2">
+              <div className="hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-300">
+                <ThemeToggle />
+              </div>
 
-            <Link
-              to="/customer/wishlist"
-              className="relative p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-            >
-              <Heart size={20} className="group-hover:text-red-500 transition-colors" />
-              {wishlistCount > 0 && (
-                <motion.span 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm"
-                >
-                  {wishlistCount}
-                </motion.span>
-              )}
-            </Link>
+              <Link
+                to="/customer/wishlist"
+                className="relative p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-all duration-300 group hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]"
+              >
+                <Heart size={22} className="group-hover:text-red-500 transition-colors" />
+                {wishlistCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-[0_2px_5px_rgba(239,68,68,0.4)] border border-white dark:border-slate-900"
+                  >
+                    {wishlistCount}
+                  </motion.span>
+                )}
+              </Link>
 
-            <Link
-              to="/cart"
-              className="relative p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-            >
-              <ShoppingCart size={20} className="group-hover:text-brand-600 transition-colors" />
-              {cartCount > 0 && (
-                <motion.span 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-0 right-0 w-4 h-4 bg-brand-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm"
-                >
-                  {cartCount}
-                </motion.span>
-              )}
-            </Link>
+              <Link
+                to="/cart"
+                className="relative p-2.5 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 transition-all duration-300 group hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(0,112,243,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+              >
+                <ShoppingCart size={22} className="group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" />
+                {cartCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="absolute top-0 right-0 w-4 h-4 bg-brand-600 dark:bg-brand-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-[0_2px_5px_rgba(0,112,243,0.4)] border border-white dark:border-slate-900"
+                  >
+                    {cartCount}
+                  </motion.span>
+                )}
+              </Link>
 
-            {isAuthenticated ? (
-              <div className="relative group ml-2">
-                <button className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-sm group-hover:shadow-md transition-all">
-                  <span className="text-sm font-medium">{user?.name?.charAt(0).toUpperCase()}</span>
-                </button>
-                <div className="absolute right-0 top-full mt-3 w-56 glass-panel rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 transform origin-top-right scale-95 group-hover:scale-100">
-                  <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
-                    <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                      {user?.name}
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                      {user?.email}
-                    </p>
-                  </div>
-                  <div className="p-2">
-                    <Link
-                      to={user?.role === 'admin' ? '/admin' : user?.role === 'seller' ? '/seller' : '/customer'}
-                      className="block px-4 py-2 text-sm rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                    >
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={signOut}
-                      className="w-full text-left px-4 py-2 text-sm rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-1"
-                    >
-                      Sign Out
-                    </button>
+              {isAuthenticated ? (
+                <div className="relative group ml-2">
+                  <button className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-sm group-hover:shadow-[0_0_12px_rgba(0,112,243,0.4)] transition-all duration-300 group-hover:scale-105">
+                    <span className="text-sm font-bold">{user?.name?.charAt(0).toUpperCase()}</span>
+                  </button>
+                  <div className="absolute right-0 top-full mt-3 w-56 glass-panel rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 transform origin-top-right scale-95 group-hover:scale-100">
+                    <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
+                      <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                        {user?.name}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                        {user?.email}
+                      </p>
+                    </div>
+                    <div className="p-2">
+                      <Link
+                        to={user?.role === 'admin' ? '/admin' : user?.role === 'seller' ? '/seller' : '/customer'}
+                        className="block px-4 py-2.5 text-sm font-medium rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      >
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={signOut}
+                        className="w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-1"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <Link to="/login" className="btn-primary text-sm py-2 px-5 hidden sm:inline-flex ml-2 rounded-full shadow-md shadow-brand-500/20">
-                Sign In
-              </Link>
-            )}
+              ) : (
+                <Link to="/login" className="btn-primary text-sm font-semibold py-2.5 px-6 hidden sm:inline-flex ml-2 rounded-full shadow-[0_4px_12px_rgba(0,112,243,0.3)] hover:shadow-[0_6px_16px_rgba(0,112,243,0.4)] transition-all duration-300 hover:-translate-y-0.5">
+                  Sign In
+                </Link>
+              )}
+            </div>
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 ml-1 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="lg:hidden p-2.5 ml-1 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300 active:scale-95"
             >
-              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
@@ -235,7 +241,7 @@ const Navbar = () => {
         {/* Search Bar - Mobile */}
         <AnimatePresence>
           {searchOpen && (
-            <motion.div 
+            <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
@@ -252,7 +258,7 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -263,9 +269,8 @@ const Navbar = () => {
                 <NavLink
                   key={link.to}
                   to={link.to}
-                  className={({ isActive }) => `px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    isActive ? 'bg-brand-50 text-brand-600 dark:bg-slate-800 dark:text-brand-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
-                  }`}
+                  className={({ isActive }) => `px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? 'bg-brand-50 text-brand-600 dark:bg-slate-800 dark:text-brand-400' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    }`}
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}

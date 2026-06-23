@@ -56,7 +56,7 @@ const ProductCard = ({ product }) => {
       to={`/products/${_id}`}
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="glass-card p-0 overflow-hidden group block animate-fade-in hover:shadow-2xl dark:hover:shadow-slate-800/80"
+      className="glass-card p-0 overflow-hidden group flex flex-col h-full animate-fade-in hover:shadow-2xl dark:hover:shadow-slate-800/80"
     >
       <div className="relative overflow-hidden aspect-square bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
         <img
@@ -93,8 +93,8 @@ const ProductCard = ({ product }) => {
         </button>
       </div>
 
-      <div className="p-4">
-        <h3 className="font-medium text-slate-900 dark:text-white truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+      <div className="p-4 flex flex-col flex-grow">
+        <h3 className="font-medium text-slate-900 dark:text-white line-clamp-2 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
           {name}
         </h3>
 
@@ -107,7 +107,7 @@ const ProductCard = ({ product }) => {
           </div>
         )}
 
-        <div className="flex items-center justify-between mt-3">
+        <div className="flex items-center justify-between mt-auto pt-3">
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold text-brand-600 dark:text-brand-400">
               ${discountedPrice.toFixed(2)}

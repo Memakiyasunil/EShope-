@@ -39,7 +39,7 @@ const SearchBar = ({
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
           autoFocus={autoFocus}
-          className="input-field pl-10 pr-10 py-2.5 w-full"
+          className="w-full pl-11 pr-11 py-2.5 bg-slate-100/60 dark:bg-slate-800/60 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/60 focus:bg-white dark:focus:bg-slate-900 focus:border-brand-500/50 rounded-full text-sm font-medium transition-all duration-300 outline-none"
         />
         {query && (
           <button
