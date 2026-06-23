@@ -5,6 +5,8 @@ import Payment from '../models/Payment.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
 import Seller from '../models/Seller.js';
+import Withdrawal from '../models/Withdrawal.js';
+import Notification from '../models/Notification.js';
 
 export const getSalesAnalytics = asyncHandler(async (req, res) => {
   const days = parseInt(req.query.days) || 30;
@@ -144,3 +146,75 @@ export const getOrderAnalytics = asyncHandler(async (req, res) => {
     avgOrderValue: Math.round(avgOrderValue[0]?.avg || 0),
   });
 });
+
+export const getSuperAdminFinances = asyncHandler(async (req, res) => {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const [
+    totalTurnoverData,
+    todayTurnoverData,
+    walletData,
+    payoutData,
+    activeUsers,
+    inactiveUsers,
+    activeSellers,
+    inactiveSellers,
+    todayJoiningsUser,
+    todayJoiningsSeller,
+    pendingWithdrawals,
+    recentNotifications
+  ] = await Promise.all([
+    // Total Turnover
+    Order.aggregate([
+      { $match: { status: { $nin: ['cancelled', 'returned'] } } },
+      { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+    ]),
+    // Today's Turnover
+    Order.aggregate([
+      { $match: { createdAt: { $gte: todayStart }, status: { $nin: ['cancelled', 'returned'] } } },
+      { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+    ]),
+    // Wallet Balances & Total Payouts (from Seller model)
+    Seller.aggregate([
+      { $group: { _id: null, totalWallet: { $sum: '$walletBalance' }, totalPayouts: { $sum: '$totalPayouts' } } }
+    ]),
+    // Payouts from Withdrawal model
+    Withdrawal.aggregate([
+      { $match: { status: 'completed' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]),
+    User.countDocuments({ isActive: true, role: 'user' }),
+    User.countDocuments({ isActive: false, role: 'user' }),
+    Seller.countDocuments({ status: 'approved' }),
+    Seller.countDocuments({ status: { $ne: 'approved' } }),
+    User.countDocuments({ createdAt: { $gte: todayStart } }),
+    Seller.countDocuments({ createdAt: { $gte: todayStart } }),
+    Withdrawal.countDocuments({ status: 'pending' }),
+    Notification.find({ user: req.user._id }).sort('-createdAt').limit(10)
+  ]);
+
+  const totalTurnover = totalTurnoverData[0]?.total || 0;
+  const todayTurnover = todayTurnoverData[0]?.total || 0;
+  const totalWalletBalances = walletData[0]?.totalWallet || 0;
+  const totalGeneratedPayouts = payoutData[0]?.total || walletData[0]?.totalPayouts || 0;
+  
+  // Platform Income: Assume average 10% commission on total turnover for demonstration,
+  // or calculate from actual order item commissions if available. 
+  // We'll use a conservative 10% flat estimate for the dashboard if not explicitly stored.
+  const totalIncome = totalTurnover * 0.10;
+
+  sendSuccess(res, 200, {
+    totalTurnover,
+    todayTurnover,
+    totalIncome,
+    totalWalletBalances,
+    totalGeneratedPayouts,
+    activeMembers: activeUsers + activeSellers,
+    inactiveMembers: inactiveUsers + inactiveSellers,
+    todayJoinings: todayJoiningsUser + todayJoiningsSeller,
+    pendingFundRequests: pendingWithdrawals,
+    recentNotifications
+  });
+});
+

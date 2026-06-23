@@ -34,6 +34,7 @@ const adminLinks = [
   { to: '/dashboard/admin/categories', label: 'Categories', icon: Layers },
   { to: '/dashboard/admin/orders', label: 'Orders', icon: ShoppingBag },
   { to: '/dashboard/admin/payments', label: 'Payments', icon: CreditCard },
+  { to: '/dashboard/admin/withdrawals', label: 'Withdrawals', icon: CreditCard },
   { to: '/dashboard/admin/coupons', label: 'Coupons', icon: Tag },
   { to: '/dashboard/admin/banners', label: 'Banners', icon: Image },
   { to: '/dashboard/admin/blogs', label: 'Blogs', icon: FileText },

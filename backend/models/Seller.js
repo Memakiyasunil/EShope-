@@ -35,6 +35,8 @@ const sellerSchema = new mongoose.Schema(
     totalProducts: { type: Number, default: 0 },
     totalSales: { type: Number, default: 0 },
     commissionRate: { type: Number, default: 10, min: 0, max: 100 },
+    walletBalance: { type: Number, default: 0, min: 0 },
+    totalPayouts: { type: Number, default: 0, min: 0 },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     status: {
