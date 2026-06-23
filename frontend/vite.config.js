@@ -19,4 +19,16 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom', '@reduxjs/toolkit', 'react-redux'],
+          ui: ['lucide-react', 'framer-motion'],
+          charts: ['chart.js', 'react-chartjs-2', 'recharts']
+        }
+      }
+    }
+  }
 });
