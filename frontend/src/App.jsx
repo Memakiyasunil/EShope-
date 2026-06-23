@@ -2,7 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from './layouts/MainLayout';
-import DashboardLayout from './layouts/DashboardLayout';
+import CustomerLayout from './layouts/CustomerLayout';
+import SellerLayout from './layouts/SellerLayout';
+import AdminLayout from './layouts/AdminLayout';
 import AuthLayout from './layouts/AuthLayout';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Ripple from './components/ui/Ripple';
@@ -25,6 +27,7 @@ import VerifyEmail from './pages/auth/VerifyEmail';
 import ResetPassword from './pages/auth/ResetPassword';
 import SellerRegister from './pages/auth/SellerRegister';
 
+// Buyer Pages
 import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import Profile from './pages/buyer/Profile';
 import Orders from './pages/buyer/Orders';
@@ -34,14 +37,25 @@ import Cart from './pages/buyer/Cart';
 import Checkout from './pages/buyer/Checkout';
 import Addresses from './pages/buyer/Addresses';
 import Settings from './pages/buyer/Settings';
+import BuyerReviews from './pages/buyer/BuyerReviews';
+import BuyerNotifications from './pages/buyer/BuyerNotifications';
+import BuyerSupport from './pages/buyer/BuyerSupport';
 
+// Seller Pages
 import SellerDashboard from './pages/seller/SellerDashboard';
 import SellerProducts from './pages/seller/SellerProducts';
 import AddProduct from './pages/seller/AddProduct';
 import SellerOrders from './pages/seller/SellerOrders';
 import SellerReports from './pages/seller/SellerReports';
 import SellerSettings from './pages/seller/SellerSettings';
+import SellerInventory from './pages/seller/SellerInventory';
+import SellerSalesAnalytics from './pages/seller/SellerSalesAnalytics';
+import SellerCoupons from './pages/seller/SellerCoupons';
+import SellerCustomers from './pages/seller/SellerCustomers';
+import SellerEarnings from './pages/seller/SellerEarnings';
+import SellerNotifications from './pages/seller/SellerNotifications';
 
+// Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSellers from './pages/admin/AdminSellers';
@@ -55,6 +69,10 @@ import AdminBanners from './pages/admin/AdminBanners';
 import AdminBlogs from './pages/admin/AdminBlogs';
 import AdminReports from './pages/admin/AdminReports';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminReviews from './pages/admin/AdminReviews';
+import AdminCMS from './pages/admin/AdminCMS';
+import AdminContactRequests from './pages/admin/AdminContactRequests';
+import AdminRoles from './pages/admin/AdminRoles';
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -62,7 +80,7 @@ const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 4500); // Extended to 4.5 seconds to show off morphing text
+    }, 4500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -125,14 +143,8 @@ const App = () => {
           <Route path="reset-password" element={<ResetPassword />} />
         </Route>
 
-        <Route
-          path="dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
+        {/* CUSTOMER PANEL */}
+        <Route path="dashboard" element={<ProtectedRoute><CustomerLayout /></ProtectedRoute>}>
           <Route index element={<BuyerDashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="orders" element={<Orders />} />
@@ -141,29 +153,48 @@ const App = () => {
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="addresses" element={<Addresses />} />
+          <Route path="reviews" element={<BuyerReviews />} />
+          <Route path="notifications" element={<BuyerNotifications />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="support" element={<BuyerSupport />} />
+        </Route>
 
-          <Route path="seller" element={<SellerDashboard />} />
-          <Route path="seller/products" element={<SellerProducts />} />
-          <Route path="seller/products/add" element={<AddProduct />} />
-          <Route path="seller/orders" element={<SellerOrders />} />
-          <Route path="seller/reports" element={<SellerReports />} />
-          <Route path="seller/settings" element={<SellerSettings />} />
+        {/* SELLER PANEL */}
+        <Route path="dashboard/seller" element={<ProtectedRoute><SellerLayout /></ProtectedRoute>}>
+          <Route index element={<SellerDashboard />} />
+          <Route path="products" element={<SellerProducts />} />
+          <Route path="products/add" element={<AddProduct />} />
+          <Route path="orders" element={<SellerOrders />} />
+          <Route path="inventory" element={<SellerInventory />} />
+          <Route path="analytics" element={<SellerSalesAnalytics />} />
+          <Route path="coupons" element={<SellerCoupons />} />
+          <Route path="customers" element={<SellerCustomers />} />
+          <Route path="earnings" element={<SellerEarnings />} />
+          <Route path="notifications" element={<SellerNotifications />} />
+          <Route path="settings" element={<SellerSettings />} />
+          <Route path="reports" element={<SellerReports />} />
+        </Route>
 
-          <Route path="admin" element={<AdminDashboard />} />
-          <Route path="admin/users" element={<AdminUsers />} />
-          <Route path="admin/sellers" element={<AdminSellers />} />
-          <Route path="admin/products" element={<AdminProducts />} />
-          <Route path="admin/categories" element={<AdminCategories />} />
-          <Route path="admin/orders" element={<AdminOrders />} />
-          <Route path="admin/payments" element={<AdminPayments />} />
-          <Route path="admin/withdrawals" element={<AdminWithdrawals />} />
-          <Route path="admin/finances" element={<AdminWithdrawals />} />
-          <Route path="admin/coupons" element={<AdminCoupons />} />
-          <Route path="admin/banners" element={<AdminBanners />} />
-          <Route path="admin/blogs" element={<AdminBlogs />} />
-          <Route path="admin/reports" element={<AdminReports />} />
-          <Route path="admin/settings" element={<AdminSettings />} />
+        {/* ADMIN PANEL */}
+        <Route path="dashboard/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="sellers" element={<AdminSellers />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="categories" element={<AdminCategories />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="payments" element={<AdminPayments />} />
+          <Route path="withdrawals" element={<AdminWithdrawals />} />
+          <Route path="finances" element={<AdminWithdrawals />} />
+          <Route path="reviews" element={<AdminReviews />} />
+          <Route path="coupons" element={<AdminCoupons />} />
+          <Route path="reports" element={<AdminReports />} />
+          <Route path="cms" element={<AdminCMS />} />
+          <Route path="contact-requests" element={<AdminContactRequests />} />
+          <Route path="settings" element={<AdminSettings />} />
+          <Route path="roles" element={<AdminRoles />} />
+          <Route path="banners" element={<AdminBanners />} />
+          <Route path="blogs" element={<AdminBlogs />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

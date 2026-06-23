@@ -1,14 +1,14 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import Sidebar from '../components/common/Sidebar';
+import SellerSidebar from '../components/common/sidebars/SellerSidebar';
 import DashboardHeader from '../components/common/DashboardHeader';
 
-const DashboardLayout = () => {
+const SellerLayout = () => {
   const location = useLocation();
 
   return (
     <div className="min-h-dvh flex bg-slate-50 dark:bg-slate-950 transition-colors overflow-x-hidden">
-      <Sidebar />
+      <SellerSidebar />
       <div className="flex-1 flex flex-col min-w-0 border-l border-slate-200 dark:border-slate-800 h-dvh overflow-hidden">
         <DashboardHeader />
         <main className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto relative">
@@ -30,4 +30,4 @@ const DashboardLayout = () => {
   );
 };
 
-export default DashboardLayout;
+export default SellerLayout;
