@@ -11,7 +11,7 @@ const DashboardLayout = () => {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-slate-950 transition-colors overflow-x-hidden">
+    <div className="min-h-dvh flex flex-col bg-white dark:bg-slate-950 transition-colors overflow-x-hidden">
       <Navbar />
       <div className="flex flex-1 w-full">
         <Sidebar />

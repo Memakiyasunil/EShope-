@@ -3,7 +3,7 @@ import ThemeToggle from '../components/common/ThemeToggle';
 
 const AuthLayout = () => {
   return (
-    <div className="min-h-screen flex bg-white dark:bg-slate-950 transition-colors">
+    <div className="min-h-dvh flex bg-white dark:bg-slate-950 transition-colors">
       <div className="hidden lg:flex lg:w-1/2 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 relative items-center justify-center">
         <div className="max-w-md px-12 text-slate-900 dark:text-white text-center">
           <div className="flex flex-col items-center gap-6 mb-12">

@@ -6,7 +6,7 @@ import Footer from '../components/common/Footer';
 const MainLayout = () => {
   const location = useLocation();
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-slate-950 transition-colors overflow-x-hidden">
+    <div className="min-h-dvh flex flex-col bg-white dark:bg-slate-950 transition-colors overflow-x-hidden">
       <Navbar />
       <main className="flex-1 w-full px-0 py-8 overflow-hidden relative">
         <AnimatePresence mode="wait">
