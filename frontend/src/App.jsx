@@ -131,7 +131,7 @@ const App = () => {
         </Route>
 
         {/* CUSTOMER PANEL */}
-        <Route path="customer" element={<ProtectedRoute roles={['customer']}><CustomerLayout /></ProtectedRoute>}>
+        <Route path="customer" element={<ProtectedRoute roles={['buyer']}><CustomerLayout /></ProtectedRoute>}>
           <Route index element={<BuyerDashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="edit-profile" element={<BuyerEditProfile />} />
@@ -154,7 +154,7 @@ const App = () => {
           <Route index element={<SellerDashboard />} />
           <Route path="products" element={<SellerProducts />} />
           <Route path="products/add" element={<AddProduct />} />
-          <Route path="products/edit" element={<EditProduct />} />
+          <Route path="products/edit/:id" element={<EditProduct />} />
           <Route path="inventory" element={<SellerInventory />} />
           <Route path="orders" element={<SellerOrders />} />
           <Route path="customer-orders" element={<SellerCustomerOrders />} />

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { addToCart } from '../../store/slices/cartSlice';
 import { toggleWishlist, selectIsInWishlist } from '../../store/slices/wishlistSlice';
+import api from '../../utils/axios';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -24,12 +25,7 @@ const ProductCard = ({ product }) => {
 
   const productImage = image || images?.[0] || 'https://placehold.co/600x600/e2e8f0/1e293b?text=No+Image';
   const discountedPrice = discount ? price - (price * discount) / 100 : price;
-
-  // Use placehold.co as a reliable fallback if picsum is down
   let finalImage = productImage;
-  if (finalImage.includes('picsum.photos')) {
-    finalImage = `https://placehold.co/600x600/f8fafc/334155?text=${encodeURIComponent(name.split(' ').slice(0, 2).join(' '))}`;
-  }
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -42,11 +38,21 @@ const ProductCard = ({ product }) => {
     toast.success('Added to cart');
   };
 
-  const handleToggleWishlist = (e) => {
+  const handleToggleWishlist = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     dispatch(toggleWishlist(product));
     toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+
+    try {
+      if (isWishlisted) {
+        await api.delete(`/wishlist/${product._id}`);
+      } else {
+        await api.post('/wishlist', { productId: product._id });
+      }
+    } catch (err) {
+      // Silently fail if user is not authenticated
+    }
   };
 
   const MotionLink = motion.create(Link);

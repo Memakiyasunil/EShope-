@@ -15,6 +15,7 @@ import ThemeToggle from './ThemeToggle';
 import SearchBar from './SearchBar';
 import useAuth from '../../hooks/useAuth';
 import { selectCartCount } from '../../store/slices/cartSlice';
+import api from '../../utils/axios';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -28,6 +29,7 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredMenu, setHoveredMenu] = useState(null);
+  const [navCategories, setNavCategories] = useState([]);
 
   const { isAuthenticated, user, signOut } = useAuth();
   const cartCount = useSelector(selectCartCount);
@@ -37,6 +39,12 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
+    
+    // Fetch categories for mega menu
+    api.get('/categories')
+      .then(({ data }) => setNavCategories(data?.categories || data?.data || []))
+      .catch(() => setNavCategories([]));
+      
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -113,10 +121,10 @@ const Navbar = () => {
                             <div>
                               <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3">Categories</h3>
                               <ul className="space-y-2">
-                                {['Electronics', 'Fashion', 'Home', 'Beauty'].map(cat => (
-                                  <li key={cat}>
-                                    <Link to={`/categories?category=${cat.toLowerCase()}`} className="text-sm text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:translate-x-1 transition-transform block">
-                                      {cat}
+                                {navCategories.slice(0, 6).map(cat => (
+                                  <li key={cat._id}>
+                                    <Link to={`/categories?category=${cat._id}`} className="text-sm text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:translate-x-1 transition-transform block">
+                                      {cat.name}
                                     </Link>
                                   </li>
                                 ))}

@@ -27,7 +27,7 @@ const Login = () => {
       if (from === '/' || from === '/dashboard') {
         if (userRole === 'admin') navigate('/admin', { replace: true });
         else if (userRole === 'seller') navigate('/seller', { replace: true });
-        else if (userRole === 'customer') navigate('/customer', { replace: true });
+        else if (userRole === 'buyer') navigate('/customer', { replace: true });
         else navigate('/', { replace: true });
       } else {
         navigate(from, { replace: true });

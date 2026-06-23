@@ -7,7 +7,11 @@ import Category from '../models/Category.js';
 import { uploadMultipleToCloud } from '../middleware/upload.js';
 
 const buildProductFilter = (query) => {
-  const filter = { isActive: true };
+  const filter = {};
+
+  if (query.status !== 'all') {
+    filter.isActive = true;
+  }
 
   if (query.category) filter.category = query.category;
   if (query.subCategory) filter.subCategory = query.subCategory;

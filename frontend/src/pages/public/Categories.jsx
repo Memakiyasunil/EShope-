@@ -17,19 +17,10 @@ const demoProducts = Array.from({ length: 12 }, (_, i) => ({
   image: `https://placehold.co/600x600/f8fafc/334155?text=Product+${i + 1}`,
 }));
 
-const CATEGORY_ITEMS = [
-  { id: 'electronics', label: 'Electronics', icon: Laptop, color: 'bg-blue-500' },
-  { id: 'fashion', label: "Fashion", icon: Shirt, color: 'bg-pink-500' },
-  { id: 'home-appliances', label: 'Home Appliances', icon: HomeIcon, color: 'bg-green-500' },
-  { id: 'sports', label: 'Sports', icon: Dumbbell, color: 'bg-orange-500' },
-  { id: 'books', label: 'Books', icon: Book, color: 'bg-purple-500' },
-  { id: 'grocery', label: 'Grocery', icon: ShoppingBag, color: 'bg-yellow-500' },
-  { id: 'mobile', label: 'Mobile', icon: Coffee, color: 'bg-red-500' },
-];
-
 const Categories = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
@@ -38,6 +29,12 @@ const Categories = () => {
   const search = searchParams.get('search') || '';
   const sort = searchParams.get('sort') || 'newest';
   const category = searchParams.get('category') || '';
+
+  useEffect(() => {
+    api.get('/categories')
+      .then(({ data }) => setCategoriesList(data?.categories || data?.data || []))
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -78,32 +75,41 @@ const Categories = () => {
     setSearchParams(params);
   };
 
-  if (!category) {
+  if (!category && !search) {
     return (
       <div className="page-container">
-        <div className="mb-8 text-center">
-          <h1 className="section-title">Shop by Category</h1>
-          <p className="section-subtitle">Select a category to view products</p>
+        <div className="mb-8 text-center pt-8">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">Shop by Category</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Select a category to view our premium products</p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {CATEGORY_ITEMS.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => updateParam('category', cat.id)}
-              className="glass-card flex flex-col items-center justify-center p-8 gap-4 hover:scale-105 transition-transform duration-300"
-            >
-              <div className={`p-4 rounded-full text-white ${cat.color}`}>
-                <cat.icon size={32} />
-              </div>
-              <span className="font-medium text-lg dark:text-white">{cat.label}</span>
-            </button>
-          ))}
-        </div>
+        
+        {categoriesList.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {categoriesList.map((cat) => (
+              <button
+                key={cat._id}
+                onClick={() => updateParam('category', cat._id)}
+                className="glass-card flex flex-col items-center justify-center p-8 gap-4 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group"
+              >
+                <div className="w-16 h-16 bg-brand-50 dark:bg-brand-900/20 rounded-full flex items-center justify-center text-brand-600 dark:text-brand-400 text-2xl font-extrabold uppercase overflow-hidden shadow-inner group-hover:scale-110 transition-transform duration-300 border border-brand-100 dark:border-brand-800">
+                  {cat.image ? (
+                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                  ) : (
+                    cat.name.charAt(0)
+                  )}
+                </div>
+                <span className="font-bold text-lg dark:text-white text-center group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">{cat.name}</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <LoadingSkeleton count={4} />
+        )}
       </div>
     );
   }
 
-  const currentCategoryLabel = CATEGORY_ITEMS.find(c => c.id === category)?.label || 'Products';
+  const currentCategoryLabel = category ? (categoriesList.find(c => c._id === category)?.name || 'Products') : (search ? `Search: ${search}` : 'Products');
 
   return (
     <div className="page-container">

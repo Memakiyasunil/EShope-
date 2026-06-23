@@ -57,7 +57,7 @@ const SellerProducts = () => {
                 <td className="p-3">{p.quantity}</td>
                 <td className="p-3"><StatusBadge status={p.stock} /></td>
                 <td className="p-3 text-right">
-                  <Link to={`/dashboard/seller/products/edit/${p._id}`} className="inline-flex p-1.5 text-brand-600"><Edit size={16} /></Link>
+                  <Link to={`/seller/products/edit/${p._id}`} className="inline-flex p-1.5 text-brand-600"><Edit size={16} /></Link>
                   <button onClick={() => handleDelete(p._id)} className="inline-flex p-1.5 text-red-500"><Trash2 size={16} /></button>
                 </td>
               </tr>
