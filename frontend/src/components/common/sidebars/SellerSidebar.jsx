@@ -1,22 +1,29 @@
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  LayoutDashboard, Package, ShoppingBag, Store, X, PlusCircle, Box, BarChart3, Tag, Users, Wallet, Bell, Settings
+  LayoutDashboard, Package, PlusCircle, Edit, Box, ShoppingBag, 
+  Users, BarChart3, TrendingUp, Tag, Settings, Star, 
+  Bell, HandCoins, Wallet, LifeBuoy, X
 } from 'lucide-react';
 import { setSidebarOpen } from '../../../store/slices/uiSlice';
 
 const sellerLinks = [
-  { to: '/dashboard/seller', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/dashboard/seller/products', label: 'Products', icon: Package },
-  { to: '/dashboard/seller/products/add', label: 'Add Product', icon: PlusCircle },
-  { to: '/dashboard/seller/orders', label: 'Orders', icon: ShoppingBag },
-  { to: '/dashboard/seller/inventory', label: 'Inventory', icon: Box },
-  { to: '/dashboard/seller/analytics', label: 'Sales Analytics', icon: BarChart3 },
-  { to: '/dashboard/seller/coupons', label: 'Coupons', icon: Tag },
-  { to: '/dashboard/seller/customers', label: 'Customers', icon: Users },
-  { to: '/dashboard/seller/earnings', label: 'Earnings', icon: Wallet },
-  { to: '/dashboard/seller/notifications', label: 'Notifications', icon: Bell },
-  { to: '/dashboard/seller/settings', label: 'Shop Settings', icon: Settings },
+  { to: '/seller', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/seller/products', label: 'Product Management', icon: Package },
+  { to: '/seller/products/add', label: 'Add Product', icon: PlusCircle },
+  { to: '/seller/products/edit', label: 'Edit Product', icon: Edit },
+  { to: '/seller/inventory', label: 'Inventory Management', icon: Box },
+  { to: '/seller/orders', label: 'Orders Management', icon: ShoppingBag },
+  { to: '/seller/customer-orders', label: 'Customer Orders', icon: Users },
+  { to: '/seller/analytics', label: 'Sales Analytics', icon: BarChart3 },
+  { to: '/seller/revenue-reports', label: 'Revenue Reports', icon: TrendingUp },
+  { to: '/seller/coupons', label: 'Coupons', icon: Tag },
+  { to: '/seller/settings', label: 'Shop Settings', icon: Settings },
+  { to: '/seller/reviews', label: 'Customer Reviews', icon: Star },
+  { to: '/seller/notifications', label: 'Notifications', icon: Bell },
+  { to: '/seller/withdrawals', label: 'Withdrawal Requests', icon: HandCoins },
+  { to: '/seller/earnings', label: 'Earnings', icon: Wallet },
+  { to: '/seller/support', label: 'Support', icon: LifeBuoy },
 ];
 
 const SellerSidebar = () => {
@@ -37,7 +44,7 @@ const SellerSidebar = () => {
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 glass border-r border-slate-200/50 dark:border-slate-700/50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${
+        className={`fixed top-0 left-0 z-50 h-full w-72 glass border-r border-slate-200/50 dark:border-slate-700/50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -51,12 +58,12 @@ const SellerSidebar = () => {
           </button>
         </div>
 
-        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100%-4rem)] scrollbar-thin">
+        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100%-4rem)] scrollbar-thin">
           {sellerLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
-              end={link.to === '/dashboard/seller'}
+              end={link.to === '/seller'}
               className={linkClass}
               onClick={() => dispatch(setSidebarOpen(false))}
             >

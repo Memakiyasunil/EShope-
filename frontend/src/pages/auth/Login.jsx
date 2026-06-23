@@ -22,7 +22,16 @@ const Login = () => {
     const result = await login(form);
     if (loginUser.fulfilled.match(result)) {
       toast.success('Welcome back!');
-      navigate(from, { replace: true });
+      
+      const userRole = result.payload?.user?.role || result.payload?.role;
+      if (from === '/' || from === '/dashboard') {
+        if (userRole === 'admin') navigate('/admin', { replace: true });
+        else if (userRole === 'seller') navigate('/seller', { replace: true });
+        else if (userRole === 'customer') navigate('/customer', { replace: true });
+        else navigate('/', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } else {
       toast.error(result.payload || 'Login failed');
     }

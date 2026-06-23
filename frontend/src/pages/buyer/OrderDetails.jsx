@@ -26,7 +26,7 @@ const OrderDetails = () => {
 
   return (
     <div>
-      <Link to="/dashboard/orders" className="inline-flex items-center gap-2 text-sm text-brand-600 mb-6 hover:underline">
+      <Link to="/customer/orders" className="inline-flex items-center gap-2 text-sm text-brand-600 mb-6 hover:underline">
         <ArrowLeft size={16} /> Back to Orders
       </Link>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">

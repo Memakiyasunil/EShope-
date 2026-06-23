@@ -39,7 +39,7 @@ const SellerProducts = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="section-title">My Products</h1>
-        <Link to="/dashboard/seller/products/add" className="btn-primary text-sm"><Plus size={16} /> Add Product</Link>
+        <Link to="/seller/products/add" className="btn-primary text-sm"><Plus size={16} /> Add Product</Link>
       </div>
       <div className="glass-card overflow-x-auto">
         <table className="w-full text-sm">

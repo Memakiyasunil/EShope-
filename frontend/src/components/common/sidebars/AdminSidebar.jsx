@@ -1,25 +1,34 @@
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  LayoutDashboard, Users, Store, Package, Layers, ShoppingBag, CreditCard, Star, Tag, BarChart3, FileText, MessageSquare, Settings, Shield, X
+  LayoutDashboard, Users, Store, UserCircle, Package, Layers, Award, ShoppingBag, 
+  CreditCard, Activity, Tag, Star, FileText, Image, Bell, MessageSquare, 
+  BarChart3, Shield, Settings, Database, Lock, X
 } from 'lucide-react';
 import { setSidebarOpen } from '../../../store/slices/uiSlice';
 
 const adminLinks = [
-  { to: '/dashboard/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/dashboard/admin/users', label: 'Users', icon: Users },
-  { to: '/dashboard/admin/sellers', label: 'Sellers', icon: Store },
-  { to: '/dashboard/admin/products', label: 'Products', icon: Package },
-  { to: '/dashboard/admin/categories', label: 'Categories', icon: Layers },
-  { to: '/dashboard/admin/orders', label: 'Orders', icon: ShoppingBag },
-  { to: '/dashboard/admin/payments', label: 'Payments', icon: CreditCard },
-  { to: '/dashboard/admin/reviews', label: 'Reviews', icon: Star },
-  { to: '/dashboard/admin/coupons', label: 'Coupons', icon: Tag },
-  { to: '/dashboard/admin/reports', label: 'Reports', icon: BarChart3 },
-  { to: '/dashboard/admin/cms', label: 'CMS', icon: FileText },
-  { to: '/dashboard/admin/contact-requests', label: 'Contact Requests', icon: MessageSquare },
-  { to: '/dashboard/admin/settings', label: 'System Settings', icon: Settings },
-  { to: '/dashboard/admin/roles', label: 'Roles & Permissions', icon: Shield },
+  { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/admin/users', label: 'Users Management', icon: Users },
+  { to: '/admin/sellers', label: 'Sellers Management', icon: Store },
+  { to: '/admin/customers', label: 'Customers Management', icon: UserCircle },
+  { to: '/admin/products', label: 'Products Management', icon: Package },
+  { to: '/admin/categories', label: 'Categories', icon: Layers },
+  { to: '/admin/brands', label: 'Brands', icon: Award },
+  { to: '/admin/orders', label: 'Orders Management', icon: ShoppingBag },
+  { to: '/admin/payments', label: 'Payments', icon: CreditCard },
+  { to: '/admin/transactions', label: 'Transactions', icon: Activity },
+  { to: '/admin/coupons', label: 'Coupons', icon: Tag },
+  { to: '/admin/reviews', label: 'Reviews & Ratings', icon: Star },
+  { to: '/admin/cms', label: 'CMS Pages', icon: FileText },
+  { to: '/admin/banners', label: 'Banners', icon: Image },
+  { to: '/admin/notifications', label: 'Notifications', icon: Bell },
+  { to: '/admin/contact-requests', label: 'Contact Queries', icon: MessageSquare },
+  { to: '/admin/reports', label: 'Reports & Analytics', icon: BarChart3 },
+  { to: '/admin/roles', label: 'Role & Permission', icon: Shield },
+  { to: '/admin/settings', label: 'Website Settings', icon: Settings },
+  { to: '/admin/system-logs', label: 'System Logs', icon: Database },
+  { to: '/admin/security', label: 'Security Settings', icon: Lock },
 ];
 
 const AdminSidebar = () => {
@@ -40,7 +49,7 @@ const AdminSidebar = () => {
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 glass border-r border-slate-200/50 dark:border-slate-700/50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${
+        className={`fixed top-0 left-0 z-50 h-full w-72 glass border-r border-slate-200/50 dark:border-slate-700/50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -59,7 +68,7 @@ const AdminSidebar = () => {
             <NavLink
               key={link.to}
               to={link.to}
-              end={link.to === '/dashboard/admin'}
+              end={link.to === '/admin'}
               className={linkClass}
               onClick={() => dispatch(setSidebarOpen(false))}
             >

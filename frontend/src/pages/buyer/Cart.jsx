@@ -64,7 +64,7 @@ const Cart = () => {
               <span>Total</span><span>₹{(total + (total >= 999 ? 0 : 99)).toLocaleString()}</span>
             </div>
           </div>
-          <Link to="/dashboard/checkout" className="btn-primary w-full text-center">Proceed to Checkout</Link>
+          <Link to="/customer/checkout" className="btn-primary w-full text-center">Proceed to Checkout</Link>
         </div>
       </div>
     </div>

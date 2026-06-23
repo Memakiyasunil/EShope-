@@ -156,7 +156,7 @@ const Navbar = () => {
             <ThemeToggle />
 
             <Link
-              to="/dashboard/wishlist"
+              to="/customer/wishlist"
               className="relative p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
             >
               <Heart size={20} className="group-hover:text-red-500 transition-colors" />
@@ -203,7 +203,7 @@ const Navbar = () => {
                   </div>
                   <div className="p-2">
                     <Link
-                      to="/dashboard"
+                      to={user?.role === 'admin' ? '/admin' : user?.role === 'seller' ? '/seller' : '/customer'}
                       className="block px-4 py-2 text-sm rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                     >
                       Dashboard

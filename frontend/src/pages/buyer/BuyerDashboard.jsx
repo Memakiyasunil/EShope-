@@ -41,15 +41,15 @@ const BuyerDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/dashboard/cart" className="glass-card hover:shadow-lg transition-shadow text-center py-6">
+        <Link to="/customer/cart" className="glass-card hover:shadow-lg transition-shadow text-center py-6">
           <ShoppingBag className="mx-auto mb-2 text-brand-600" size={28} />
           <p className="font-medium">View Cart</p>
         </Link>
-        <Link to="/dashboard/orders" className="glass-card hover:shadow-lg transition-shadow text-center py-6">
+        <Link to="/customer/orders" className="glass-card hover:shadow-lg transition-shadow text-center py-6">
           <Package className="mx-auto mb-2 text-brand-600" size={28} />
           <p className="font-medium">My Orders</p>
         </Link>
-        <Link to="/dashboard/wishlist" className="glass-card hover:shadow-lg transition-shadow text-center py-6">
+        <Link to="/customer/wishlist" className="glass-card hover:shadow-lg transition-shadow text-center py-6">
           <Heart className="mx-auto mb-2 text-brand-600" size={28} />
           <p className="font-medium">Wishlist</p>
         </Link>

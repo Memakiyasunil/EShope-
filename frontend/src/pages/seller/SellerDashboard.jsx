@@ -41,8 +41,8 @@ const SellerDashboard = () => {
         {data?.salesByDay?.length > 0 ? <Line data={chartData} options={{ responsive: true, plugins: { legend: { display: false } } }} /> : <p className="text-slate-500 text-sm">No sales data yet</p>}
       </div>
       <div className="flex gap-4">
-        <Link to="/dashboard/seller/products" className="btn-primary">Manage Products</Link>
-        <Link to="/dashboard/seller/orders" className="btn-outline">View Orders</Link>
+        <Link to="/seller/products" className="btn-primary">Manage Products</Link>
+        <Link to="/seller/orders" className="btn-outline">View Orders</Link>
       </div>
     </div>
   );

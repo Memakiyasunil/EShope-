@@ -1,21 +1,28 @@
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  LayoutDashboard, ShoppingBag, Heart, Settings, MapPin, User, Package, Star, Bell, LifeBuoy, X
+  LayoutDashboard, User, UserCog, ShoppingBag, Truck, Heart, 
+  ShoppingCart, CreditCard, MapPin, Wallet, Star, Bell, 
+  LifeBuoy, RefreshCcw, Settings, X
 } from 'lucide-react';
 import { setSidebarOpen } from '../../../store/slices/uiSlice';
 
 const customerLinks = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/dashboard/profile', label: 'Profile', icon: User },
-  { to: '/dashboard/orders', label: 'Orders', icon: ShoppingBag },
-  { to: '/dashboard/wishlist', label: 'Wishlist', icon: Heart },
-  { to: '/dashboard/cart', label: 'Cart', icon: Package },
-  { to: '/dashboard/addresses', label: 'Addresses', icon: MapPin },
-  { to: '/dashboard/reviews', label: 'Reviews', icon: Star },
-  { to: '/dashboard/notifications', label: 'Notifications', icon: Bell },
-  { to: '/dashboard/settings', label: 'Settings', icon: Settings },
-  { to: '/dashboard/support', label: 'Support', icon: LifeBuoy },
+  { to: '/customer', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/customer/profile', label: 'My Profile', icon: User },
+  { to: '/customer/edit-profile', label: 'Edit Profile', icon: UserCog },
+  { to: '/customer/orders', label: 'My Orders', icon: ShoppingBag },
+  { to: '/customer/order-tracking', label: 'Order Tracking', icon: Truck },
+  { to: '/customer/wishlist', label: 'Wishlist', icon: Heart },
+  { to: '/customer/cart', label: 'Shopping Cart', icon: ShoppingCart },
+  { to: '/customer/checkout', label: 'Checkout', icon: CreditCard },
+  { to: '/customer/addresses', label: 'Saved Addresses', icon: MapPin },
+  { to: '/customer/payment-methods', label: 'Payment Methods', icon: Wallet },
+  { to: '/customer/reviews', label: 'Reviews & Ratings', icon: Star },
+  { to: '/customer/notifications', label: 'Notifications', icon: Bell },
+  { to: '/customer/support', label: 'Support Tickets', icon: LifeBuoy },
+  { to: '/customer/returns', label: 'Returns & Refunds', icon: RefreshCcw },
+  { to: '/customer/settings', label: 'Account Settings', icon: Settings },
 ];
 
 const CustomerSidebar = () => {
@@ -36,7 +43,7 @@ const CustomerSidebar = () => {
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 glass border-r border-slate-200/50 dark:border-slate-700/50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${
+        className={`fixed top-0 left-0 z-50 h-full w-72 glass border-r border-slate-200/50 dark:border-slate-700/50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:z-auto ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -50,12 +57,12 @@ const CustomerSidebar = () => {
           </button>
         </div>
 
-        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100%-4rem)] scrollbar-thin">
+        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100%-4rem)] scrollbar-thin">
           {customerLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
-              end={link.to === '/dashboard'}
+              end={link.to === '/customer'}
               className={linkClass}
               onClick={() => dispatch(setSidebarOpen(false))}
             >
