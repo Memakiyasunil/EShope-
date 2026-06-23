@@ -16,25 +16,49 @@ A production-ready **Multi-Vendor E-Commerce Marketplace** built with the MERN s
 
 ## Project Structure
 
-```
-Ecommerce/
-├── backend/
-│   ├── config/          # DB, Cloudinary
-│   ├── controllers/     # Route handlers
-│   ├── middleware/      # Auth, validation, rate limiting
-│   ├── models/          # Mongoose schemas
-│   ├── routes/          # API routes
-│   ├── services/        # Payment, email, seed
-│   ├── scripts/         # Seed runner
-│   └── utils/           # Helpers
-├── frontend/
-│   └── src/
-│       ├── components/  # Reusable UI
-│       ├── hooks/       # Custom hooks
-│       ├── layouts/     # Page layouts
-│       ├── pages/       # Public, buyer, seller, admin
-│       └── store/       # Redux slices
-└── docs/                # API & installation guides
+```text
+EShope-/
+├── backend/                  # Node.js / Express Backend
+│   ├── config/               # Database and 3rd-party configs
+│   ├── controllers/          # API route controllers
+│   ├── middleware/           # Auth, error handling, file upload
+│   ├── models/               # Mongoose database models
+│   ├── routes/               # Express API endpoints
+│   ├── scripts/              # Utility scripts (e.g. Seeder)
+│   ├── services/             # Business logic & integrations
+│   ├── uploads/              # Local file upload directory
+│   ├── utils/                # Helper functions
+│   ├── app.js                # Express app setup
+│   ├── server.js             # Application entry point
+│   ├── Dockerfile            # Backend Docker image config
+│   └── package.json          # Backend dependencies
+├── frontend/                 # React / Vite Frontend
+│   ├── public/               # Static public assets
+│   ├── src/                  # React source code
+│   │   ├── components/       # Reusable UI components
+│   │   │   ├── common/       # Global elements (Navbar, Footer, ProductCard)
+│   │   │   └── ui/           # Basic UI blocks (GlassCard, RevealText)
+│   │   ├── hooks/            # Custom React hooks (useAuth, etc.)
+│   │   ├── layouts/          # Page layouts (Main, Dashboard)
+│   │   ├── lib/              # Utility libraries (cn, clsx)
+│   │   ├── pages/            # Application pages
+│   │   │   ├── admin/        # Admin dashboard views
+│   │   │   ├── buyer/        # Customer dashboard views
+│   │   │   ├── public/       # Public facing (Home, About, Contact)
+│   │   │   └── seller/       # Vendor dashboard views
+│   │   ├── store/            # Redux Toolkit store and slices
+│   │   ├── utils/            # Axios and frontend helpers
+│   │   ├── App.jsx           # Main routing component
+│   │   ├── index.css         # Tailwind & global CSS
+│   │   └── main.jsx          # React DOM render entry
+│   ├── nginx.conf            # Nginx config for production
+│   ├── Dockerfile            # Frontend Docker image config
+│   ├── tailwind.config.js    # Tailwind CSS configuration
+│   ├── vite.config.js        # Vite bundler configuration
+│   └── package.json          # Frontend dependencies
+├── docs/                     # Documentation folder
+├── docker-compose.yml        # Docker composition for production
+└── README.md                 # Project documentation
 ```
 
 ## Quick Start
