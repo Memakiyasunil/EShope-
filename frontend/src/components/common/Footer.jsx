@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight } from 'lucide-react';
+import MagneticButton from '../ui/MagneticButton';
 
 const footerLinks = {
   shop: [
@@ -12,7 +14,7 @@ const footerLinks = {
     { to: '/about', label: 'About Us' },
     { to: '/contact', label: 'Contact' },
     { to: '/faq', label: 'FAQ' },
-    { to: '/seller-register', label: 'Become a Seller' },
+    { to: '/seller-register', label: 'Become a Partner' },
   ],
   legal: [
     { to: '/privacy-policy', label: 'Privacy Policy' },
@@ -20,107 +22,141 @@ const footerLinks = {
   ],
 };
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
 const Footer = () => {
   return (
-    <footer className="bg-slate-900 text-slate-300 mt-auto">
-      <div className="w-full px-0 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
-                <img src="/logo.png" alt="E-Shop Logo" className="w-full h-full object-contain" />
+    <footer className="bg-slate-950 text-slate-300 mt-auto relative overflow-hidden border-t border-white/5">
+      {/* Background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-brand-600/20 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 relative z-10">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8"
+        >
+          {/* Brand Column */}
+          <motion.div variants={itemVariants} className="lg:col-span-4">
+            <Link to="/" className="flex items-center gap-3 mb-6 group inline-flex">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden bg-white/10 group-hover:bg-white/20 transition-colors">
+                <img src="/logo.png" alt="E-Shop Logo" className="w-full h-full object-contain p-1" />
               </div>
-              <span className="text-lg font-bold text-white">E-Shop Online</span>
+              <span className="text-xl font-bold text-white tracking-tight">E-Shop</span>
             </Link>
-            <p className="text-sm text-slate-400 leading-relaxed mb-4">
-              Your trusted online marketplace for quality products at unbeatable prices.
-              Shop with confidence and enjoy fast delivery.
+            <p className="text-sm text-slate-400 leading-relaxed mb-8 max-w-sm">
+              The premier digital commerce platform. Experience seamless shopping with cutting-edge technology and world-class design.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
                 <a
                   key={i}
                   href="#"
-                  className="p-2 rounded-lg bg-slate-800 hover:bg-brand-600 text-slate-400 hover:text-white transition-colors"
+                  className="w-10 h-10 rounded-full border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-white hover:text-slate-900 hover:border-transparent transition-all duration-300 hover:-translate-y-1"
                   aria-label="Social link"
                 >
                   <Icon size={18} />
                 </a>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div>
-            <h3 className="text-white font-semibold mb-4">Shop</h3>
-            <ul className="space-y-2">
+          {/* Links Columns */}
+          <motion.div variants={itemVariants} className="lg:col-span-2">
+            <h3 className="text-white font-semibold mb-6">Product</h3>
+            <ul className="space-y-4">
               {footerLinks.shop.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-slate-400 hover:text-brand-400 transition-colors"
+                    className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
                   >
+                    <span className="w-0 h-0.5 bg-brand-500 transition-all duration-300 group-hover:w-2" />
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
-          <div>
-            <h3 className="text-white font-semibold mb-4">Company</h3>
-            <ul className="space-y-2">
+          <motion.div variants={itemVariants} className="lg:col-span-2">
+            <h3 className="text-white font-semibold mb-6">Company</h3>
+            <ul className="space-y-4">
               {footerLinks.company.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-slate-400 hover:text-brand-400 transition-colors"
+                    className="text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-2 group"
                   >
+                    <span className="w-0 h-0.5 bg-brand-500 transition-all duration-300 group-hover:w-2" />
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
-          <div>
-            <h3 className="text-white font-semibold mb-4">Contact Us</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-sm text-slate-400">
-                <MapPin size={16} className="shrink-0 mt-0.5" />
-                <span>123 Commerce Street, Business City, BC 12345</span>
-              </li>
-              <li className="flex items-center gap-3 text-sm text-slate-400">
-                <Phone size={16} className="shrink-0" />
-                <a href="tel:+1234567890" className="hover:text-brand-400 transition-colors">
-                  +1 (234) 567-890
-                </a>
-              </li>
-              <li className="flex items-center gap-3 text-sm text-slate-400">
-                <Mail size={16} className="shrink-0" />
-                <a href="mailto:support@eshoponline.com" className="hover:text-brand-400 transition-colors">
-                  support@eshoponline.com
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+          {/* Newsletter Column */}
+          <motion.div variants={itemVariants} className="lg:col-span-4">
+            <h3 className="text-white font-semibold mb-6">Stay Updated</h3>
+            <p className="text-sm text-slate-400 mb-4">
+              Subscribe to our newsletter for the latest updates, exclusive deals, and product announcements.
+            </p>
+            <form className="relative group" onSubmit={(e) => e.preventDefault()}>
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors"
+              />
+              <button 
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-brand-600 hover:bg-brand-500 text-white rounded-lg transition-colors"
+              >
+                <ArrowRight size={16} />
+              </button>
+            </form>
+          </motion.div>
+        </motion.div>
 
-        <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} E-Shop Online. All rights reserved.
-          </p>
-          <div className="flex gap-4">
+        {/* Bottom Bar */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="border-t border-slate-800 mt-16 pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
+        >
+          <div className="flex gap-6">
             {footerLinks.legal.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className="text-sm text-slate-500 hover:text-brand-400 transition-colors"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {link.label}
               </Link>
             ))}
           </div>
-        </div>
+          <p className="text-xs text-slate-500">
+            &copy; {new Date().getFullYear()} E-Shop Inc. All rights reserved.
+          </p>
+        </motion.div>
       </div>
     </footer>
   );
