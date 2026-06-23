@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import api from '../../utils/axios';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 

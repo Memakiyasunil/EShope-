@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import api from '../../utils/axios';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
@@ -11,7 +11,7 @@ const AdminUsers = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchUsers = () => {
+  const fetchUsers = useCallback(() => {
     setLoading(true);
     api.get(`/users?page=${page}&limit=15`)
       .then(({ data }) => {
@@ -20,9 +20,9 @@ const AdminUsers = () => {
       })
       .catch(() => setUsers([]))
       .finally(() => setLoading(false));
-  };
+  }, [page]);
 
-  useEffect(() => { fetchUsers(); }, [page]);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const toggleActive = async (id, isActive) => {
     try {

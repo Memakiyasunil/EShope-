@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 const MorphingText = ({ 
   texts = ["Welcome", "To", "E-Shop", "Online"], 

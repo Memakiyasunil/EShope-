@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../../store/slices/uiSlice';
@@ -14,7 +14,10 @@ const Modal = ({
   const { modal } = useSelector((state) => state.ui);
 
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : modal.isOpen;
-  const handleClose = controlledOnClose || (() => dispatch(closeModal()));
+  const handleClose = useCallback(() => {
+    if (controlledOnClose) controlledOnClose();
+    else dispatch(closeModal());
+  }, [controlledOnClose, dispatch]);
 
   useEffect(() => {
     const handleEscape = (e) => {

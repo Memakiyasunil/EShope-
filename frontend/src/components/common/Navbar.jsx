@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   ShoppingCart,
   Heart,
@@ -9,7 +9,6 @@ import {
   Menu,
   X,
   Search,
-  Store,
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import SearchBar from './SearchBar';
@@ -30,7 +29,6 @@ const Navbar = () => {
   const { isAuthenticated, user, signOut } = useAuth();
   const cartCount = useSelector(selectCartCount);
   const wishlistCount = useSelector((state) => state.wishlist.items.length);
-  const location = useLocation();
 
   const MotionLink = motion.create(Link);
 
