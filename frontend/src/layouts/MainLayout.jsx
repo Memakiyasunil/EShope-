@@ -8,7 +8,7 @@ const MainLayout = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-white dark:bg-slate-950 transition-colors overflow-x-hidden w-full max-w-[100vw]">
       <Navbar />
-      <main className="flex-1 w-full max-w-[100vw] px-0 py-8 relative">
+      <main className="flex-1 w-full max-w-[100vw] px-0 pt-24 md:pt-32 pb-8 relative">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}

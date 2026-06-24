@@ -1,25 +1,109 @@
-import React from 'react';
+import { useState } from 'react';
+import { Bell, CheckCircle, Package, Star, AlertCircle } from 'lucide-react';
 import GlassCard from '../../components/ui/GlassCard';
-import { Construction } from 'lucide-react';
 
 const BuyerNotifications = () => {
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      title: 'Order Delivered',
+      message: 'Your order #ORD-84920 has been delivered successfully. Let us know how you liked it!',
+      type: 'order',
+      date: '2 hours ago',
+      isRead: false
+    },
+    {
+      id: 2,
+      title: 'Price Drop Alert',
+      message: 'An item in your wishlist "Sony WH-1000XM4" is now 15% off.',
+      type: 'promo',
+      date: '1 day ago',
+      isRead: false
+    },
+    {
+      id: 3,
+      title: 'Review Reminder',
+      message: 'Please leave a review for your recent purchase of "Minimalist Smart Wallet".',
+      type: 'system',
+      date: '3 days ago',
+      isRead: true
+    }
+  ]);
+
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+  };
+
+  const getIcon = (type) => {
+    switch(type) {
+      case 'order': return <Package size={20} className="text-blue-500" />;
+      case 'promo': return <Star size={20} className="text-yellow-500" />;
+      default: return <Bell size={20} className="text-slate-500" />;
+    }
+  };
+
+  const getBgColor = (type) => {
+    switch(type) {
+      case 'order': return 'bg-blue-100 dark:bg-blue-900/30';
+      case 'promo': return 'bg-yellow-100 dark:bg-yellow-900/30';
+      default: return 'bg-slate-100 dark:bg-slate-800';
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Notifications</h1>
-          <p className="text-slate-500">This feature is currently under development</p>
+          <p className="text-slate-500">Stay updated on your orders and promotions</p>
         </div>
+        {notifications.some(n => !n.isRead) && (
+          <button 
+            onClick={markAllAsRead}
+            className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-2"
+          >
+            <CheckCircle size={16} /> Mark all as read
+          </button>
+        )}
       </div>
 
-      <GlassCard className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-16 h-16 bg-brand-100 dark:bg-brand-900/20 text-brand-600 rounded-2xl flex items-center justify-center mb-4">
-          <Construction size={32} />
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Coming Soon</h2>
-        <p className="text-slate-500 max-w-md">
-          We are working hard to bring you the Notifications module. Check back later for updates.
-        </p>
+      <GlassCard className="p-0 overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
+        {notifications.length > 0 ? (
+          notifications.map((notification) => (
+            <div 
+              key={notification.id} 
+              className={`p-6 flex gap-4 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 ${!notification.isRead ? 'bg-brand-50/30 dark:bg-brand-900/10' : ''}`}
+            >
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${getBgColor(notification.type)}`}>
+                {getIcon(notification.type)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start mb-1">
+                  <h3 className={`font-semibold text-slate-900 dark:text-white ${!notification.isRead ? 'font-bold' : ''}`}>
+                    {notification.title}
+                  </h3>
+                  <span className="text-xs text-slate-500 whitespace-nowrap ml-4">{notification.date}</span>
+                </div>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  {notification.message}
+                </p>
+              </div>
+              {!notification.isRead && (
+                <div className="w-2 h-2 bg-brand-500 rounded-full mt-2 flex-shrink-0"></div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20 text-center px-6">
+            <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mb-6">
+              <Bell size={40} />
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">You're all caught up!</h2>
+            <p className="text-slate-500 max-w-md">
+              You don't have any new notifications right now. We'll let you know when there's an update on your orders.
+            </p>
+          </div>
+        )}
       </GlassCard>
     </div>
   );

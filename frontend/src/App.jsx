@@ -91,6 +91,9 @@ import BuyerOrderTracking from './pages/buyer/BuyerOrderTracking';
 import BuyerPaymentMethods from './pages/buyer/BuyerPaymentMethods';
 import BuyerReturns from './pages/buyer/BuyerReturns';
 
+import PaymentSuccess from './pages/public/PaymentSuccess';
+import PaymentCancel from './pages/public/PaymentCancel';
+
 const App = () => {
   const [showSplash, setShowSplash] = useState(true);
 
@@ -120,6 +123,8 @@ const App = () => {
           <Route path="terms" element={<Terms />} />
           <Route path="seller-register" element={<SellerRegister />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="payment/success" element={<PaymentSuccess />} />
+          <Route path="payment/cancel" element={<PaymentCancel />} />
         </Route>
 
         <Route element={<AuthLayout />}>

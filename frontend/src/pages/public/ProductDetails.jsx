@@ -17,7 +17,7 @@ const demoProduct = {
   rating: 4.5,
   reviewCount: 128,
   discount: 15,
-  stock: 50,
+  quantity: 50,
   description: 'Premium wireless headphones with active noise cancellation, 30-hour battery life, and crystal-clear audio quality. Perfect for music lovers and professionals alike.',
   images: [
     'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600',
@@ -80,7 +80,7 @@ const ProductDetails = () => {
     : product.price;
 
   const handleAddToCart = () => {
-    if (product.stock === 0) {
+    if (product.quantity === 0) {
       toast.error('Out of stock');
       return;
     }
@@ -186,19 +186,19 @@ const ProductDetails = () => {
               </button>
               <span className="px-4 py-2 text-sm font-medium">{quantity}</span>
               <button
-                onClick={() => setQuantity(Math.min(product.stock || 99, quantity + 1))}
+                onClick={() => setQuantity(Math.min(product.quantity || 99, quantity + 1))}
                 className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-r-lg"
               >
                 <Plus size={16} />
               </button>
             </div>
-            <span className={`text-sm ${product.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
-              {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+            <span className={`text-sm ${product.quantity > 0 ? 'text-green-600' : 'text-red-500'}`}>
+              {product.quantity > 0 ? `${product.quantity} in stock` : 'Out of stock'}
             </span>
           </div>
 
           <div className="flex flex-wrap gap-3 mb-8">
-            <button onClick={handleAddToCart} disabled={product.stock === 0} className="btn-primary flex-1 sm:flex-none">
+            <button onClick={handleAddToCart} disabled={product.quantity === 0} className="btn-primary flex-1 sm:flex-none">
               <ShoppingCart size={18} /> Add to Cart
             </button>
             <button
