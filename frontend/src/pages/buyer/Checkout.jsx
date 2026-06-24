@@ -117,7 +117,7 @@ const Checkout = () => {
           const scriptLoaded = await loadRazorpayScript();
           if (!scriptLoaded) {
             toast.error('Failed to load Razorpay SDK');
-            return navigate(`/customer/orders/${order._id}`);
+            return navigate('/customer/orders');
           }
 
           const options = {
@@ -158,7 +158,7 @@ const Checkout = () => {
         } catch (err) {
           if (err.response?.status === 503) {
             toast.error('Razorpay keys not configured. Please use COD or add keys to backend/.env');
-            navigate(`/customer/orders/${order._id}`);
+            navigate('/customer/orders');
           } else {
             throw err;
           }
@@ -172,7 +172,7 @@ const Checkout = () => {
         } catch (err) {
           if (err.response?.status === 503) {
             toast.error('Stripe keys not configured. Please use COD or add keys to backend/.env');
-            navigate(`/customer/orders/${order._id}`);
+            navigate('/customer/orders');
           } else {
             throw err;
           }
@@ -182,7 +182,7 @@ const Checkout = () => {
         await api.post(`/payments/${order._id}/initiate`, { method: 'cod' });
         dispatch(clearCart());
         toast.success('Order placed successfully!');
-        navigate(`/customer/orders/${order._id}`);
+        navigate('/customer/orders');
       }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to place order');

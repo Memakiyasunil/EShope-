@@ -117,3 +117,57 @@ export const deleteUser = asyncHandler(async (req, res) => {
   await user.save();
   sendSuccess(res, 200, {}, 'User deactivated');
 });
+
+// --- Payment Methods ---
+
+export const getPaymentMethods = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  sendSuccess(res, 200, { paymentMethods: user.paymentMethods });
+});
+
+export const addPaymentMethod = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const { isDefault } = req.body;
+
+  if (isDefault || user.paymentMethods.length === 0) {
+    user.paymentMethods.forEach((pm) => (pm.isDefault = false));
+  }
+
+  user.paymentMethods.push({ ...req.body, isDefault: isDefault || user.paymentMethods.length === 0 });
+  await user.save();
+
+  sendSuccess(res, 201, { paymentMethods: user.paymentMethods }, 'Payment method added successfully');
+});
+
+export const updatePaymentMethod = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const pmIndex = user.paymentMethods.findIndex((pm) => pm._id.toString() === req.params.pmId);
+
+  if (pmIndex === -1) throw new ApiError(404, 'Payment method not found');
+
+  if (req.body.isDefault) {
+    user.paymentMethods.forEach((pm) => (pm.isDefault = false));
+  }
+
+  user.paymentMethods[pmIndex] = { ...user.paymentMethods[pmIndex].toObject(), ...req.body };
+  await user.save();
+
+  sendSuccess(res, 200, { paymentMethods: user.paymentMethods }, 'Payment method updated successfully');
+});
+
+export const deletePaymentMethod = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const pmIndex = user.paymentMethods.findIndex((pm) => pm._id.toString() === req.params.pmId);
+
+  if (pmIndex === -1) throw new ApiError(404, 'Payment method not found');
+
+  const wasDefault = user.paymentMethods[pmIndex].isDefault;
+  user.paymentMethods.splice(pmIndex, 1);
+
+  if (wasDefault && user.paymentMethods.length > 0) {
+    user.paymentMethods[0].isDefault = true;
+  }
+
+  await user.save();
+  sendSuccess(res, 200, { paymentMethods: user.paymentMethods }, 'Payment method deleted successfully');
+});

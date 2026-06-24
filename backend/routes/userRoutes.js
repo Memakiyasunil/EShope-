@@ -10,6 +10,10 @@ import {
   getUserById,
   updateUserStatus,
   deleteUser,
+  getPaymentMethods,
+  addPaymentMethod,
+  updatePaymentMethod,
+  deletePaymentMethod,
 } from '../controllers/userController.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
@@ -36,6 +40,21 @@ router.post(
 );
 router.put('/addresses/:addressId', updateAddress);
 router.delete('/addresses/:addressId', deleteAddress);
+
+router.get('/payment-methods', getPaymentMethods);
+router.post(
+  '/payment-methods',
+  [
+    body('cardNumber').notEmpty().withMessage('Card number is required'),
+    body('expiryDate').notEmpty().withMessage('Expiry date is required'),
+    body('cvv').notEmpty().withMessage('CVV is required'),
+    body('nameOnCard').notEmpty().withMessage('Name on card is required'),
+  ],
+  validate,
+  addPaymentMethod
+);
+router.put('/payment-methods/:pmId', updatePaymentMethod);
+router.delete('/payment-methods/:pmId', deletePaymentMethod);
 
 router.get('/', authorize('admin'), getAllUsers);
 router.get('/:id', authorize('admin'), getUserById);

@@ -18,6 +18,18 @@ const addressSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const paymentMethodSchema = new mongoose.Schema(
+  {
+    cardNumber: { type: String, required: true, trim: true },
+    expiryDate: { type: String, required: true, trim: true },
+    cvv: { type: String, required: true, trim: true },
+    nameOnCard: { type: String, required: true, trim: true },
+    isDefault: { type: Boolean, default: false },
+    provider: { type: String, default: 'Visa' },
+  },
+  { timestamps: true }
+);
+
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: [true, 'Name is required'], trim: true },
@@ -48,6 +60,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpire: Date,
     refreshToken: { type: String, select: false },
     addresses: [addressSchema],
+    paymentMethods: [paymentMethodSchema],
     isActive: { type: Boolean, default: true },
     lastLogin: Date,
   },

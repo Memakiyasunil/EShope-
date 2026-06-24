@@ -221,6 +221,22 @@ const Navbar = () => {
                       >
                         Dashboard
                       </Link>
+                      {(!user?.role || user?.role === 'buyer') && (
+                        <>
+                          <Link
+                            to="/customer/orders"
+                            className="block px-4 py-2.5 text-sm font-medium rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mt-1"
+                          >
+                            My Orders
+                          </Link>
+                          <Link
+                            to="/customer/order-tracking"
+                            className="block px-4 py-2.5 text-sm font-medium rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mt-1"
+                          >
+                            Track Order
+                          </Link>
+                        </>
+                      )}
                       <button
                         onClick={signOut}
                         className="w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-1"
