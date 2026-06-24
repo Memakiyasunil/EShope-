@@ -1,6 +1,4 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 
 const addressSchema = new mongoose.Schema(
   {
@@ -18,79 +16,97 @@ const addressSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const paymentMethodSchema = new mongoose.Schema(
-  {
-    cardNumber: { type: String, required: true, trim: true },
-    expiryDate: { type: String, required: true, trim: true },
-    cvv: { type: String, required: true, trim: true },
-    nameOnCard: { type: String, required: true, trim: true },
-    isDefault: { type: Boolean, default: false },
-    provider: { type: String, default: 'Visa' },
+const paymentMethodSchema = new mongoose.Schema({
+  cardHolderName: {
+    type: String,
+    required: true
   },
-  { timestamps: true }
-);
-
-const userSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: [true, 'Name is required'], trim: true },
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
-      minlength: 6,
-      select: false,
-    },
-    phone: { type: String, trim: true },
-    avatar: { type: String, default: '' },
-    role: {
-      type: String,
-      enum: ['buyer', 'seller', 'admin'],
-      default: 'buyer',
-    },
-    isEmailVerified: { type: Boolean, default: false },
-    emailVerificationToken: String,
-    emailVerificationExpire: Date,
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
-    refreshToken: { type: String, select: false },
-    addresses: [addressSchema],
-    paymentMethods: [paymentMethodSchema],
-    isActive: { type: Boolean, default: true },
-    lastLogin: Date,
+  cardNumberLast4: {
+    type: String,
+    required: true
   },
-  { timestamps: true }
-);
-
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
+  expiryMonth: {
+    type: String,
+    required: true
+  },
+  expiryYear: {
+    type: String,
+    required: true
+  },
+  isDefault: {
+    type: Boolean,
+    default: false
+  }
 });
 
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6,
+    select: false,
+  },
+  role: {
+    type: String,
+    enum: ['buyer', 'seller', 'admin'],
+    default: 'buyer',
+  },
+  phone: {
+    type: String,
+    trim: true,
+  },
+  avatar: {
+    url: String,
+    publicId: String,
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  otp: String,
+  otpExpire: Date,
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  addresses: [addressSchema],
+  paymentMethods: [paymentMethodSchema],
+  wishlist: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product'
+  }],
+  lastLogin: Date,
+  refreshToken: String,
+}, {
+  timestamps: true,
+});
+
+// Encrypt password using bcrypt
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  const bcrypt = await import('bcryptjs');
+  const salt = await bcrypt.default.genSalt(10);
+  this.password = await bcrypt.default.hash(this.password, salt);
+});
+
+// Match user entered password to hashed password in database
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  return bcrypt.compare(enteredPassword, this.password);
+  const bcrypt = await import('bcryptjs');
+  return await bcrypt.default.compare(enteredPassword, this.password);
 };
 
-userSchema.methods.getEmailVerificationToken = function () {
-  const token = crypto.randomBytes(32).toString('hex');
-  this.emailVerificationToken = crypto.createHash('sha256').update(token).digest('hex');
-  this.emailVerificationExpire = Date.now() + 24 * 60 * 60 * 1000;
-  return token;
-};
-
-userSchema.methods.getResetPasswordToken = function () {
-  const token = crypto.randomBytes(32).toString('hex');
-  this.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
-  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
-  return token;
-};
-
-const User = mongoose.model('User', userSchema);
-export default User;
+export default mongoose.model('User', userSchema);

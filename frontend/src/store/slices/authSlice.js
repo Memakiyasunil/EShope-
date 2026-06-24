@@ -14,9 +14,9 @@ const storedAuth = loadAuthFromStorage();
 
 export const loginUser = createAsyncThunk(
   'auth/login',
-  async (credentials, { rejectWithValue }) => {
+  async (dataPayload, { rejectWithValue }) => {
     try {
-      const { data } = await api.post('/auth/login', credentials);
+      const { data } = await api.post('/auth/login', dataPayload);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
@@ -26,12 +26,24 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async (userData, { rejectWithValue }) => {
+  async (dataPayload, { rejectWithValue }) => {
     try {
-      const { data } = await api.post('/auth/register', userData);
+      const { data } = await api.post('/auth/register', dataPayload);
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Registration failed');
+    }
+  }
+);
+
+export const verifyOtpUser = createAsyncThunk(
+  'auth/verifyOtp',
+  async (dataPayload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post('/auth/verify-otp', dataPayload);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Verification failed');
     }
   }
 );
@@ -116,6 +128,29 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(verifyOtpUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyOtpUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken || action.payload.token;
+        state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true;
+        localStorage.setItem(
+          'auth',
+          JSON.stringify({
+            user: action.payload.user,
+            accessToken: action.payload.accessToken || action.payload.token,
+            refreshToken: action.payload.refreshToken,
+          })
+        );
+      })
+      .addCase(verifyOtpUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

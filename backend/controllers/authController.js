@@ -1,36 +1,76 @@
-import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiError, { sendSuccess } from '../utils/apiResponse.js';
 import User from '../models/User.js';
 import { sendTokenResponse, generateAccessToken } from '../utils/generateToken.js';
-import {
-  sendVerificationEmail,
-  sendPasswordResetEmail,
-  sendWelcomeEmail,
-} from '../services/emailService.js';
+import admin from '../utils/firebaseAdmin.js';
+import jwt from 'jsonwebtoken';
+import { sendVerificationEmail } from '../services/emailService.js';
 
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password, role, phone } = req.body;
 
-  const exists = await User.findOne({ email });
-  if (exists) throw new ApiError(400, 'User already exists with this email');
+  let user = await User.findOne({ email });
 
-  const allowedRoles = ['buyer', 'seller'];
-  const userRole = allowedRoles.includes(role) ? role : 'buyer';
-
-  const user = await User.create({ name, email, password, role: userRole, phone });
-
-  const verificationToken = user.getEmailVerificationToken();
-  await user.save({ validateBeforeSave: false });
-
-  try {
-    await sendVerificationEmail(user, verificationToken);
-  } catch {
-    console.warn('Verification email could not be sent');
+  if (user) {
+    if (user.isEmailVerified) {
+      throw new ApiError(400, 'User already exists and is verified. Please log in.');
+    }
+    // If not verified, allow them to register again (updates their info)
+    user.name = name;
+    user.password = password; // Will be hashed by pre-save hook
+    user.role = role || 'buyer';
+    user.phone = phone || '';
+  } else {
+    user = new User({ name, email, password, role: role || 'buyer', phone });
   }
 
-  await sendTokenResponse(user, 201, res);
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Set OTP and expiry (15 mins)
+  user.otp = otp;
+  user.otpExpire = Date.now() + 15 * 60 * 1000;
+
+  await user.save();
+
+  try {
+    await sendVerificationEmail(user, otp);
+    sendSuccess(res, 201, null, 'OTP sent to email. Please verify to continue.');
+  } catch (error) {
+    user.otp = undefined;
+    user.otpExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+    throw new ApiError(500, 'Could not send OTP email. Please try again.');
+  }
+});
+
+export const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    throw new ApiError(400, 'Please provide email and OTP');
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  if (user.isEmailVerified) {
+    throw new ApiError(400, 'Email is already verified');
+  }
+
+  if (user.otp !== otp || user.otpExpire < Date.now()) {
+    throw new ApiError(400, 'Invalid or expired OTP');
+  }
+
+  user.isEmailVerified = true;
+  user.otp = undefined;
+  user.otpExpire = undefined;
+  await user.save();
+
+  await sendTokenResponse(user, 200, res);
 });
 
 export const login = asyncHandler(async (req, res) => {
@@ -41,11 +81,18 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email }).select('+password +refreshToken');
+  
   if (!user || !(await user.matchPassword(password))) {
     throw new ApiError(401, 'Invalid credentials');
   }
 
+  if (!user.isEmailVerified) {
+    throw new ApiError(401, 'Please verify your email first');
+  }
+
   user.lastLogin = new Date();
+  await user.save({ validateBeforeSave: false });
+
   await sendTokenResponse(user, 200, res);
 });
 
@@ -76,92 +123,4 @@ export const logout = asyncHandler(async (req, res) => {
 export const getMe = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   sendSuccess(res, 200, { user });
-});
-
-export const verifyEmail = asyncHandler(async (req, res) => {
-  const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
-
-  const user = await User.findOne({
-    emailVerificationToken: hashedToken,
-    emailVerificationExpire: { $gt: Date.now() },
-  });
-
-  if (!user) throw new ApiError(400, 'Invalid or expired verification token');
-
-  user.isEmailVerified = true;
-  user.emailVerificationToken = undefined;
-  user.emailVerificationExpire = undefined;
-  await user.save();
-
-  try {
-    await sendWelcomeEmail(user);
-  } catch {
-    console.warn('Welcome email could not be sent');
-  }
-
-  sendSuccess(res, 200, {}, 'Email verified successfully');
-});
-
-export const resendVerification = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
-  if (user.isEmailVerified) throw new ApiError(400, 'Email already verified');
-
-  const token = user.getEmailVerificationToken();
-  await user.save({ validateBeforeSave: false });
-
-  await sendVerificationEmail(user, token);
-  sendSuccess(res, 200, {}, 'Verification email sent');
-});
-
-export const forgotPassword = asyncHandler(async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) {
-    sendSuccess(res, 200, {}, 'If email exists, reset link has been sent');
-    return;
-  }
-
-  const resetToken = user.getResetPasswordToken();
-  await user.save({ validateBeforeSave: false });
-
-  try {
-    await sendPasswordResetEmail(user, resetToken);
-    sendSuccess(res, 200, {}, 'Password reset email sent');
-  } catch {
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-    await user.save({ validateBeforeSave: false });
-    throw new ApiError(500, 'Email could not be sent');
-  }
-});
-
-export const resetPassword = asyncHandler(async (req, res) => {
-  const resetPasswordToken = crypto
-    .createHash('sha256')
-    .update(req.params.token)
-    .digest('hex');
-
-  const user = await User.findOne({
-    resetPasswordToken,
-    resetPasswordExpire: { $gt: Date.now() },
-  });
-
-  if (!user) throw new ApiError(400, 'Invalid or expired reset token');
-
-  user.password = req.body.password;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpire = undefined;
-  await user.save();
-
-  await sendTokenResponse(user, 200, res);
-});
-
-export const updatePassword = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).select('+password');
-  if (!(await user.matchPassword(req.body.currentPassword))) {
-    throw new ApiError(401, 'Current password is incorrect');
-  }
-
-  user.password = req.body.newPassword;
-  await user.save();
-  sendSuccess(res, 200, {}, 'Password updated successfully');
 });

@@ -3,7 +3,6 @@ import { CreditCard, Plus, ShieldCheck, CheckCircle, Trash2, Edit2, X } from 'lu
 import toast from 'react-hot-toast';
 import GlassCard from '../../components/ui/GlassCard';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
-import SuccessPopup from '../../components/ui/SuccessPopup';
 import api from '../../utils/axios';
 
 const BuyerPaymentMethods = () => {
@@ -11,7 +10,6 @@ const BuyerPaymentMethods = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [successState, setSuccessState] = useState({ isOpen: false, message: '', subMessage: '' });
   
   const [formData, setFormData] = useState({
     cardNumber: '',
@@ -77,10 +75,10 @@ const BuyerPaymentMethods = () => {
     try {
       if (editingId) {
         await api.put(`/users/payment-methods/${editingId}`, formData);
-        setSuccessState({ isOpen: true, message: 'Card Updated!', subMessage: 'Your payment method was successfully updated.' });
+        toast.success('Your payment method was successfully updated.');
       } else {
         await api.post('/users/payment-methods', formData);
-        setSuccessState({ isOpen: true, message: 'Card Added!', subMessage: 'Your new payment method has been securely saved.' });
+        toast.success('Your new payment method has been securely saved.');
       }
       fetchMethods();
       handleCloseModal();
@@ -93,7 +91,7 @@ const BuyerPaymentMethods = () => {
     if (!window.confirm('Are you sure you want to delete this payment method?')) return;
     try {
       await api.delete(`/users/payment-methods/${id}`);
-      setSuccessState({ isOpen: true, message: 'Card Removed', subMessage: 'The payment method was removed from your account.' });
+      toast.success('The payment method was removed from your account.');
       fetchMethods();
     } catch (error) {
       toast.error('Failed to delete payment method');

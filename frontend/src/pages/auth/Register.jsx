@@ -26,17 +26,22 @@ const Register = () => {
       return;
     }
 
-    const result = await register({
-      name: form.name,
-      email: form.email,
-      password: form.password,
-    });
+    try {
+      const result = await register({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: 'buyer'
+      });
 
-    if (registerUser.fulfilled.match(result)) {
-      toast.success('Account created! Please verify your email.');
-      navigate('/verify-email');
-    } else {
-      toast.error(result.payload || 'Registration failed');
+      if (registerUser.fulfilled.match(result)) {
+        toast.success('Registration successful! Please verify your email.');
+        navigate('/verify-otp', { state: { email: form.email } });
+      } else {
+        toast.error(result.payload || 'Registration failed');
+      }
+    } catch (error) {
+      toast.error(error.message || 'Registration failed');
     }
   };
 

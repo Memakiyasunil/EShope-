@@ -13,17 +13,21 @@ export const sendWelcomeEmail = async (user) => {
   });
 };
 
-export const sendVerificationEmail = async (user, token) => {
-  const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
+export const sendVerificationEmail = async (user, otp) => {
   await sendEmail({
     email: user.email,
-    subject: 'Verify Your Email - E-Shop Online',
-    message: `Verify your email: ${verifyUrl}`,
+    subject: 'Your Verification Code - E-Shop Online',
+    message: `Your verification code is: ${otp}`,
     html: `
-      <h2>Email Verification</h2>
-      <p>Hi ${user.name},</p>
-      <p>Please verify your email by clicking <a href="${verifyUrl}">here</a>.</p>
-      <p>Link expires in 24 hours.</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
+        <h2 style="color: #0f172a; margin-top: 0;">Email Verification</h2>
+        <p style="color: #475569; font-size: 16px;">Hi ${user.name},</p>
+        <p style="color: #475569; font-size: 16px;">Thank you for registering! Please use the following 6-digit OTP to verify your email address:</p>
+        <div style="background-color: #f8fafc; padding: 24px; text-align: center; border-radius: 8px; margin: 32px 0;">
+          <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2563eb;">${otp}</span>
+        </div>
+        <p style="color: #64748b; font-size: 14px;">This code will expire in 15 minutes. Do not share this code with anyone.</p>
+      </div>
     `,
   });
 };

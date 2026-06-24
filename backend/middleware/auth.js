@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import admin from '../utils/firebaseAdmin.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiError from '../utils/apiResponse.js';
 import User from '../models/User.js';
@@ -15,16 +15,16 @@ export const protect = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select('-password -refreshToken');
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    req.user = await User.findOne({ firebaseUid: decodedToken.uid }).select('-password -refreshToken');
     if (!req.user) {
-      throw new ApiError(401, 'User not found');
+      throw new ApiError(401, 'User not found in database');
     }
     if (!req.user.isActive) {
       throw new ApiError(401, 'Account is deactivated');
     }
     next();
-  } catch {
+  } catch (error) {
     throw new ApiError(401, 'Not authorized, token failed');
   }
 });
@@ -47,8 +47,8 @@ export const optionalAuth = asyncHandler(async (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password -refreshToken');
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      req.user = await User.findOne({ firebaseUid: decodedToken.uid }).select('-password -refreshToken');
     } catch {
       req.user = null;
     }

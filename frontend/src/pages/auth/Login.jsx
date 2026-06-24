@@ -19,21 +19,26 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login(form);
-    if (loginUser.fulfilled.match(result)) {
-      toast.success('Welcome back!');
-      
-      const userRole = result.payload?.user?.role || result.payload?.role;
-      if (from === '/' || from === '/dashboard') {
-        if (userRole === 'admin') navigate('/admin', { replace: true });
-        else if (userRole === 'seller') navigate('/seller', { replace: true });
-        else if (userRole === 'buyer') navigate('/customer', { replace: true });
-        else navigate('/', { replace: true });
+    try {
+      const result = await login({ email: form.email, password: form.password });
+
+      if (loginUser.fulfilled.match(result)) {
+        toast.success('Welcome back!');
+        
+        const userRole = result.payload?.user?.role || result.payload?.role;
+        if (from === '/' || from === '/dashboard') {
+          if (userRole === 'admin') navigate('/admin', { replace: true });
+          else if (userRole === 'seller') navigate('/seller', { replace: true });
+          else if (userRole === 'buyer') navigate('/customer', { replace: true });
+          else navigate('/', { replace: true });
+        } else {
+          navigate(from, { replace: true });
+        }
       } else {
-        navigate(from, { replace: true });
+        toast.error(result.payload || 'Login failed');
       }
-    } else {
-      toast.error(result.payload || 'Login failed');
+    } catch (error) {
+      toast.error(error.message || 'Login failed');
     }
   };
 

@@ -24,6 +24,7 @@ import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import ResetPassword from './pages/auth/ResetPassword';
+import VerifyOtp from './pages/auth/VerifyOtp';
 import SellerRegister from './pages/auth/SellerRegister';
 
 // Buyer Pages
@@ -132,6 +133,7 @@ const App = () => {
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="verify-email" element={<VerifyEmail />} />
+          <Route path="verify-otp" element={<VerifyOtp />} />
           <Route path="reset-password" element={<ResetPassword />} />
         </Route>
 
