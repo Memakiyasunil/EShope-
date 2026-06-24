@@ -40,7 +40,7 @@ const Checkout = () => {
 
   // If no addresses, force add address
   useEffect(() => {
-    if (user?.addresses?.length === 0) {
+    if (user && (!user.addresses || user.addresses.length === 0)) {
       setIsAddingAddress(true);
     }
   }, [user]);
@@ -210,7 +210,7 @@ const Checkout = () => {
           <div className="glass-card">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold">Delivery Address</h2>
-              {user?.addresses?.length > 0 && !isAddingAddress && (
+              {!isAddingAddress && (
                 <button 
                   onClick={() => setIsAddingAddress(true)}
                   className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1"

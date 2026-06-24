@@ -100,7 +100,7 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-orderSchema.pre('save', function (next) {
+orderSchema.pre('validate', function (next) {
   if (!this.orderNumber) {
     this.orderNumber = `ESO${Date.now()}${Math.floor(Math.random() * 1000)}`;
   }

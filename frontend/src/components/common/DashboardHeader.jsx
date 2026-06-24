@@ -34,8 +34,12 @@ const DashboardHeader = () => {
           </div>
           <div className="relative group cursor-pointer">
             <div className="absolute inset-0 bg-brand-500 rounded-full blur-md opacity-40 group-hover:opacity-70 transition-opacity" />
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 via-brand-500 to-purple-600 text-white flex items-center justify-center font-bold shadow-lg relative z-10 border border-white/20 transform group-hover:scale-105 transition-all">
-              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 via-brand-500 to-purple-600 text-white flex items-center justify-center font-bold shadow-lg relative z-10 border border-white/20 transform group-hover:scale-105 transition-all overflow-hidden">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.charAt(0).toUpperCase() || 'U'
+              )}
             </div>
           </div>
           <button 

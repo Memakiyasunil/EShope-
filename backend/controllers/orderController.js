@@ -60,19 +60,35 @@ const calcOrderPricing = async (cartItems, couponId) => {
 };
 
 export const createOrder = asyncHandler(async (req, res) => {
-  const { shippingAddress, paymentMethod, notes } = req.body;
+  const { shippingAddress, paymentMethod, notes, items } = req.body;
 
-  const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
-  if (!cart?.items?.length) throw new ApiError(400, 'Cart is empty');
+  let populatedItems = [];
+  let coupon = null;
 
-  for (const item of cart.items) {
-    if (!item.product?.isActive) throw new ApiError(400, `Product ${item.product?.name} is unavailable`);
-    if (item.product.quantity < item.quantity) {
-      throw new ApiError(400, `Insufficient stock for ${item.product.name}`);
+  if (items && items.length > 0) {
+    for (const item of items) {
+      const productDoc = await Product.findById(item.product);
+      if (!productDoc || !productDoc.isActive) throw new ApiError(400, `Product unavailable`);
+      if (productDoc.quantity < item.quantity) {
+        throw new ApiError(400, `Insufficient stock for ${productDoc.name}`);
+      }
+      populatedItems.push({ product: productDoc, quantity: item.quantity });
     }
+  } else {
+    const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
+    if (!cart?.items?.length) throw new ApiError(400, 'Cart is empty');
+    
+    for (const item of cart.items) {
+      if (!item.product?.isActive) throw new ApiError(400, `Product ${item.product?.name} is unavailable`);
+      if (item.product.quantity < item.quantity) {
+        throw new ApiError(400, `Insufficient stock for ${item.product.name}`);
+      }
+    }
+    populatedItems = cart.items;
+    coupon = cart.coupon;
   }
 
-  const pricing = await calcOrderPricing(cart.items, cart.coupon);
+  const pricing = await calcOrderPricing(populatedItems, coupon);
 
   const order = await Order.create({
     user: req.user._id,
@@ -89,8 +105,9 @@ export const createOrder = asyncHandler(async (req, res) => {
     statusHistory: [{ status: 'pending', note: 'Order placed' }],
   });
 
-  for (const item of cart.items) {
-    await Product.findByIdAndUpdate(item.product._id, {
+  for (const item of populatedItems) {
+    const productId = item.product._id || item.product;
+    await Product.findByIdAndUpdate(productId, {
       $inc: { quantity: -item.quantity, totalSold: item.quantity },
     });
   }
@@ -99,9 +116,8 @@ export const createOrder = asyncHandler(async (req, res) => {
     await Coupon.findByIdAndUpdate(pricing.coupon._id, { $inc: { usedCount: 1 } });
   }
 
-  cart.items = [];
-  cart.coupon = null;
-  await cart.save();
+  // Clear the backend cart if it exists
+  await Cart.findOneAndUpdate({ user: req.user._id }, { items: [], coupon: null });
 
   await Notification.create({
     user: req.user._id,
