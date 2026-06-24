@@ -40,6 +40,8 @@ export const register = asyncHandler(async (req, res) => {
     user.otp = undefined;
     user.otpExpire = undefined;
     await user.save({ validateBeforeSave: false });
+    
+    console.error('[Nodemailer Error]:', error); // ADDED SO WE CAN SEE WHY AWS IS FAILING
     throw new ApiError(500, 'Could not send OTP email. Please try again.');
   }
 });

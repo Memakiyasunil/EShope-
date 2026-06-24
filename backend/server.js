@@ -15,6 +15,8 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
