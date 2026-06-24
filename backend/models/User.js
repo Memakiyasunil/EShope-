@@ -17,21 +17,24 @@ const addressSchema = new mongoose.Schema(
 );
 
 const paymentMethodSchema = new mongoose.Schema({
-  cardHolderName: {
+  nameOnCard: {
     type: String,
     required: true
   },
-  cardNumberLast4: {
+  cardNumber: {
     type: String,
     required: true
   },
-  expiryMonth: {
+  expiryDate: {
     type: String,
     required: true
   },
-  expiryYear: {
+  cvv: {
     type: String,
-    required: true
+  },
+  provider: {
+    type: String,
+    default: 'VISA'
   },
   isDefault: {
     type: Boolean,

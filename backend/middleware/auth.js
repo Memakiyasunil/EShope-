@@ -1,4 +1,4 @@
-import admin from '../utils/firebaseAdmin.js';
+import jwt from 'jsonwebtoken';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiError from '../utils/apiResponse.js';
 import User from '../models/User.js';
@@ -15,8 +15,8 @@ export const protect = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = await User.findOne({ firebaseUid: decodedToken.uid }).select('-password -refreshToken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id).select('-password -refreshToken');
     if (!req.user) {
       throw new ApiError(401, 'User not found in database');
     }
@@ -47,8 +47,8 @@ export const optionalAuth = asyncHandler(async (req, res, next) => {
 
   if (token) {
     try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      req.user = await User.findOne({ firebaseUid: decodedToken.uid }).select('-password -refreshToken');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = await User.findById(decoded.id).select('-password -refreshToken');
     } catch {
       req.user = null;
     }
