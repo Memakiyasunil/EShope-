@@ -12,7 +12,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   if (req.file) {
     const uploaded = await uploadToCloud(req.file.path, 'avatars');
-    user.avatar = uploaded.url;
+    user.avatar = { url: uploaded.url, publicId: uploaded.publicId };
   }
 
   await user.save();

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { Plus, Save, X } from 'lucide-react';
-import { selectCartItems, selectCartTotal, clearCart } from '../../store/slices/cartSlice';
+import { Plus, Save, X, AlertTriangle } from 'lucide-react';
+import { selectCartItems, selectCartTotal, clearCart, removeFromCart } from '../../store/slices/cartSlice';
 import useAuth from '../../hooks/useAuth';
 import api from '../../utils/axios';
 
@@ -18,8 +18,10 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [addressId, setAddressId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [validating, setValidating] = useState(true);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [addressLoading, setAddressLoading] = useState(false);
+  const [invalidItems, setInvalidItems] = useState([]);
 
   const [addressForm, setAddressForm] = useState({
     fullName: '',
@@ -44,6 +46,42 @@ const Checkout = () => {
       setIsAddingAddress(true);
     }
   }, [user]);
+
+  // Validate all cart items against the live database on page load
+  const validateCart = useCallback(async () => {
+    if (!items.length) { setValidating(false); return; }
+    setValidating(true);
+    const badItems = [];
+    await Promise.all(
+      items.map(async (item) => {
+        try {
+          const { data } = await api.get(`/products/${item._id}`);
+          const product = data.product || data.data || data;
+          if (!product || !product.isActive) {
+            badItems.push(item);
+          }
+        } catch {
+          badItems.push(item);
+        }
+      })
+    );
+    if (badItems.length > 0) {
+      setInvalidItems(badItems);
+      badItems.forEach((item) => {
+        dispatch(removeFromCart(item._id));
+      });
+      toast(
+        `${badItems.length} item(s) removed from your cart: they are no longer available in the store.`,
+        { icon: '⚠️', duration: 6000 }
+      );
+    }
+    setValidating(false);
+  }, [items, dispatch]);
+
+  useEffect(() => {
+    validateCart();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAddressChange = (e) => {
     setAddressForm({ ...addressForm, [e.target.name]: e.target.value });
@@ -186,11 +224,30 @@ const Checkout = () => {
         navigate('/customer/orders');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to place order');
+      const errMsg = err.response?.data?.message || 'Failed to place order';
+      toast.error(errMsg);
+      // Safety net: if a product is still flagged as unavailable, remove it from cart
+      if (err.response?.status === 400 && errMsg.includes('unavailable')) {
+        const match = errMsg.match(/Product "(.+?)" is unavailable/);
+        if (match) {
+          const unavailableName = match[1];
+          const badItem = items.find((i) => i.name === unavailableName);
+          if (badItem) dispatch(removeFromCart(badItem._id));
+        }
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  if (validating) {
+    return (
+      <div className="glass-card text-center py-16">
+        <div className="inline-block w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-slate-500 font-medium">Validating your cart items...</p>
+      </div>
+    );
+  }
 
   if (!items.length) {
     return (

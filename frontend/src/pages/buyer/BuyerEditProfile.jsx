@@ -14,7 +14,7 @@ const BuyerEditProfile = () => {
     name: user?.name || '',
     phone: user?.phone || '',
   });
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || null);
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar?.url || null);
   const [avatarFile, setAvatarFile] = useState(null);
 
   const handleChange = (e) => {
