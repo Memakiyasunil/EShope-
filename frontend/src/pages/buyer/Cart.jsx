@@ -1,13 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { updateQuantity, removeFromCart, selectCartItems, selectCartTotal } from '../../store/slices/cartSlice';
+import useRoleCheck from '../../hooks/useRoleCheck';
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const items = useSelector(selectCartItems);
   const total = useSelector(selectCartTotal);
+  const { checkRole, RoleModal } = useRoleCheck();
 
   const updateQty = (id, qty) => {
     if (qty < 1) return;
@@ -64,9 +67,10 @@ const Cart = () => {
               <span>Total</span><span>₹{(total + (total >= 999 ? 0 : 99)).toLocaleString()}</span>
             </div>
           </div>
-          <Link to="/customer/checkout" className="btn-primary w-full text-center">Proceed to Checkout</Link>
+          <button onClick={(e) => checkRole(e, () => navigate('/customer/checkout'))} className="btn-primary w-full text-center">Proceed to Checkout</button>
         </div>
       </div>
+      <RoleModal />
     </div>
   );
 };

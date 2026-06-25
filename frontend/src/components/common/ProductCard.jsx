@@ -6,10 +6,12 @@ import toast from 'react-hot-toast';
 import { addToCart } from '../../store/slices/cartSlice';
 import { toggleWishlist, selectIsInWishlist } from '../../store/slices/wishlistSlice';
 import api from '../../utils/axios';
+import useRoleCheck from '../../hooks/useRoleCheck';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const isWishlisted = useSelector(selectIsInWishlist(product._id));
+  const { checkRole, RoleModal } = useRoleCheck();
 
   const {
     _id,
@@ -30,7 +32,15 @@ const ProductCard = ({ product }) => {
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (stock === 0) {
+    checkRole(() => {
+      if (stock === 0) {
+        toast.error('Product is out of stock');
+        return;
+      }
+      dispatch(addToCart({ product, quantity: 1 }));
+      toast.success('Added to cart');
+    });
+  };
       toast.error('Product is out of stock');
       return;
     }
@@ -38,11 +48,25 @@ const ProductCard = ({ product }) => {
     toast.success('Added to cart');
   };
 
-  const handleToggleWishlist = async (e) => {
+  const handleToggleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(toggleWishlist(product));
-    toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+    
+    checkRole(async () => {
+      dispatch(toggleWishlist(product));
+      toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+
+      try {
+        if (isWishlisted) {
+          await api.delete(`/wishlist/${product._id}`);
+        } else {
+          await api.post('/wishlist', { productId: product._id });
+        }
+      } catch (err) {
+        // Silently fail if user is not authenticated
+      }
+    });
+  };
 
     try {
       if (isWishlisted) {
@@ -134,6 +158,7 @@ const ProductCard = ({ product }) => {
           </button>
         </div>
       </div>
+      <RoleModal />
     </MotionLink>
   );
 };

@@ -9,6 +9,7 @@ import ProductCard from '../../components/common/ProductCard';
 import { addToCart } from '../../store/slices/cartSlice';
 import { toggleWishlist } from '../../store/slices/wishlistSlice';
 import api from '../../utils/axios';
+import useRoleCheck from '../../hooks/useRoleCheck';
 
 const demoProduct = {
   _id: '1',
@@ -36,6 +37,7 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
+  const { checkRole, RoleModal } = useRoleCheck();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -80,12 +82,14 @@ const ProductDetails = () => {
     : product.price;
 
   const handleAddToCart = () => {
-    if (product.quantity === 0) {
-      toast.error('Out of stock');
-      return;
-    }
-    dispatch(addToCart({ product, quantity }));
-    toast.success(`Added ${quantity} item(s) to cart`);
+    checkRole(() => {
+      if (product.quantity === 0) {
+        toast.error('Out of stock');
+        return;
+      }
+      dispatch(addToCart({ product, quantity }));
+      toast.success(`Added ${quantity} item(s) to cart`);
+    });
   };
 
   return (
@@ -203,8 +207,10 @@ const ProductDetails = () => {
             </button>
             <button
               onClick={() => {
-                dispatch(toggleWishlist(product));
-                toast.success('Wishlist updated');
+                checkRole(() => {
+                  dispatch(toggleWishlist(product));
+                  toast.success('Wishlist updated');
+                });
               }}
               className="btn-secondary"
             >
@@ -237,6 +243,7 @@ const ProductDetails = () => {
           </div>
         </section>
       )}
+      <RoleModal />
     </div>
   );
 };
