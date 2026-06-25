@@ -10,6 +10,7 @@ import {
   getUserById,
   updateUserStatus,
   deleteUser,
+  hardDeleteUser,
   getPaymentMethods,
   addPaymentMethod,
   updatePaymentMethod,
@@ -60,5 +61,6 @@ router.get('/', authorize('admin'), getAllUsers);
 router.get('/:id', authorize('admin'), getUserById);
 router.put('/:id/status', authorize('admin'), updateUserStatus);
 router.delete('/:id', authorize('admin'), deleteUser);
+router.delete('/:id/hard', authorize('admin'), hardDeleteUser);
 
 export default router;

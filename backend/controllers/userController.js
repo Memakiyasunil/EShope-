@@ -118,6 +118,14 @@ export const deleteUser = asyncHandler(async (req, res) => {
   sendSuccess(res, 200, {}, 'User deactivated');
 });
 
+export const hardDeleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (!user) throw new ApiError(404, 'User not found');
+  
+  await user.deleteOne();
+  sendSuccess(res, 200, {}, 'User permanently deleted');
+});
+
 // --- Payment Methods ---
 
 export const getPaymentMethods = asyncHandler(async (req, res) => {

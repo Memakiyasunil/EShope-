@@ -41,12 +41,6 @@ const ProductCard = ({ product }) => {
       toast.success('Added to cart');
     });
   };
-      toast.error('Product is out of stock');
-      return;
-    }
-    dispatch(addToCart({ product, quantity: 1 }));
-    toast.success('Added to cart');
-  };
 
   const handleToggleWishlist = (e) => {
     e.preventDefault();
@@ -66,17 +60,6 @@ const ProductCard = ({ product }) => {
         // Silently fail if user is not authenticated
       }
     });
-  };
-
-    try {
-      if (isWishlisted) {
-        await api.delete(`/wishlist/${product._id}`);
-      } else {
-        await api.post('/wishlist', { productId: product._id });
-      }
-    } catch (err) {
-      // Silently fail if user is not authenticated
-    }
   };
 
   const MotionLink = motion.create(Link);

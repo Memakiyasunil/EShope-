@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Search, Edit2, Trash2, UserCheck, UserX, Filter, Download, Mail, Eye } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Trash, UserCheck, UserX, Filter, Download, Mail, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/axios';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
@@ -78,13 +78,26 @@ const AdminUsers = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Deactivate this user permanently?')) return;
+    if (!window.confirm('Deactivate this user permanently? (They can be reactivated later)')) return;
     setDeleting(id);
     try {
       await api.delete(`/users/${id}`);
       toast.success('User deactivated');
       fetchUsers();
     } catch { toast.error('Failed'); }
+    finally { setDeleting(null); }
+  };
+
+  const handleHardDelete = async (id) => {
+    if (!window.confirm('DANGER: Are you sure you want to completely remove this user from the database? This action CANNOT be undone!')) return;
+    setDeleting(id);
+    try {
+      await api.delete(`/users/${id}/hard`);
+      toast.success('User permanently deleted');
+      fetchUsers();
+    } catch (err) { 
+      toast.error(err.response?.data?.message || 'Failed to delete user'); 
+    }
     finally { setDeleting(null); }
   };
 
@@ -184,8 +197,11 @@ const AdminUsers = () => {
                         <button onClick={() => toggleActive(u._id, u.isActive)} className={`p-1.5 rounded-lg transition-colors ${u.isActive ? 'text-slate-500 hover:bg-red-50 hover:text-red-500' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-600'}`} title={u.isActive ? 'Deactivate' : 'Activate'}>
                           {u.isActive ? <UserX size={15} /> : <UserCheck size={15} />}
                         </button>
-                        <button onClick={() => handleDelete(u._id)} disabled={deleting === u._id} className="p-1.5 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors" title="Delete">
+                        <button onClick={() => handleDelete(u._id)} disabled={deleting === u._id} className="p-1.5 rounded-lg text-slate-500 hover:bg-orange-50 hover:text-orange-500 dark:hover:bg-orange-900/20 transition-colors" title="Deactivate/Soft Delete">
                           <Trash2 size={15} />
+                        </button>
+                        <button onClick={() => handleHardDelete(u._id)} disabled={deleting === u._id} className="p-1.5 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 transition-colors" title="Hard Delete (Permanent)">
+                          <Trash size={15} />
                         </button>
                       </div>
                     </td>

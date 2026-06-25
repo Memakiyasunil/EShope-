@@ -80,6 +80,13 @@ const userSchema = new mongoose.Schema({
   },
   otp: String,
   otpExpire: Date,
+  otpAttempts: {
+    type: Number,
+    default: 0,
+  },
+  lastOtpSentAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   isActive: {
     type: Boolean,
     default: true,

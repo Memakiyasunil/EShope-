@@ -37,7 +37,14 @@ const AdminSellers = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      await api.put(`/sellers/${id}/status`, { status });
+      // The backend uses specific endpoints for each status action
+      let endpoint = '';
+      if (status === 'approved') endpoint = `/sellers/${id}/approve`;
+      else if (status === 'rejected') endpoint = `/sellers/${id}/reject`;
+      else if (status === 'suspended') endpoint = `/sellers/${id}/suspend`;
+      else endpoint = `/sellers/${id}/status`; // Fallback if any other
+
+      await api.put(endpoint, { status });
       toast.success(`Seller ${status}`);
       setSellers(prev => prev.map(s => s._id === id ? { ...s, status } : s));
     } catch { toast.error('Failed to update status'); }

@@ -7,6 +7,10 @@ import {
   refreshToken,
   logout,
   getMe,
+  forgotPassword,
+  resendOtp,
+  verifyPasswordResetOtp,
+  resetPassword
 } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
@@ -51,5 +55,49 @@ router.post(
 router.post('/refresh-token', authLimiter, refreshToken);
 router.post('/logout', protect, logout);
 router.get('/me', protect, getMe);
+
+// Password Reset Flow
+router.post(
+  '/forgot-password',
+  authLimiter,
+  [
+    body('email').isEmail().withMessage('Valid email is required')
+  ],
+  validate,
+  forgotPassword
+);
+
+router.post(
+  '/resend-otp',
+  authLimiter,
+  [
+    body('email').isEmail().withMessage('Valid email is required')
+  ],
+  validate,
+  resendOtp
+);
+
+router.post(
+  '/verify-password-reset-otp',
+  authLimiter,
+  [
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('otp').notEmpty().withMessage('OTP is required')
+  ],
+  validate,
+  verifyPasswordResetOtp
+);
+
+router.post(
+  '/reset-password',
+  authLimiter,
+  [
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('resetToken').notEmpty().withMessage('Reset token is required'),
+    body('newPassword').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+  ],
+  validate,
+  resetPassword
+);
 
 export default router;
