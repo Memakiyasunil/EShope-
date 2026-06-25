@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Trash2, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuth from '../../hooks/useAuth';
@@ -11,6 +11,10 @@ const Addresses = () => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
