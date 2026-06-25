@@ -68,7 +68,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   if (items && items.length > 0) {
     for (const item of items) {
       const productDoc = await Product.findById(item.product);
-      if (!productDoc || !productDoc.isActive) throw new ApiError(400, `Product unavailable`);
+      if (!productDoc || !productDoc.isActive) throw new ApiError(400, `Product "${item.name || 'Unknown'}" is unavailable. Please remove it from your cart.`);
       if (productDoc.quantity < item.quantity) {
         throw new ApiError(400, `Insufficient stock for ${productDoc.name}`);
       }

@@ -100,6 +100,7 @@ const Checkout = () => {
         shippingAddress: user.addresses.find(a => a._id === addressId),
         items: items.map((item) => ({
           product: item._id,
+          name: item.name,
           quantity: item.quantity,
         })),
       };

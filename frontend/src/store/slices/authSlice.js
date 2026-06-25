@@ -155,7 +155,16 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
-        state.user = action.payload.user || action.payload;
+        const updatedUser = action.payload.user || action.payload;
+        state.user = updatedUser;
+        const storedAuth = JSON.parse(localStorage.getItem('auth') || '{}');
+        localStorage.setItem(
+          'auth',
+          JSON.stringify({
+            ...storedAuth,
+            user: updatedUser,
+          })
+        );
       });
   },
 });
